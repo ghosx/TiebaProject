@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="/" method="post">
+        {% csrf_token %}
+        BDUSS:<input type="text" name="bduss">
+        <input type="submit" name="submit">
+    </form>
+</body>
+</html>
