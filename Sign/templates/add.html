@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block main %}
+    {% if request.session.name %}
+        <h2>欢迎你 {{ request.session.name }}</h2>
+            <form action="/addTZ/" method="post">
+                {% csrf_token %}
+                <p>贴吧名<input type="text" name="tbname"></p>
+                <p>帖子id<input type="number" name="tid"></p>
+                <p>是否楼中楼<input type="radio" name="lou" value="no" checked="checked">否
+                <input type="radio" name="lou" value="yes">是</p>
+                <span id="span">
+                </span>
+                <p>时间<input type="number" name="time" min="1" max="1024" step="1" value="5"></p>
+                <input type="submit">
+                <input type="reset">
+            </form>
+        <script>
+           $(function(){
+              $(":radio").click(function(){
+                if($(this).val()=='yes'){
+                    $('#span').html('楼层号<input type="number" name="fid">');
+                }else if ($(this).val()=='no'){
+                    $('#span').html('');
+                }
+              });
+             });
+        </script>
+    {% else %}
+        <h3>用户未登录</h3>
+    {% endif %}
+{% endblock %}

@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block main %}
     <form action="" method="post">
         {% csrf_token %}
         BDUSS:<input type="text" name="bduss">
+        EMAIL:<input type="email" name="email"> //用于通知bduss失效
         <input type="submit" name="submit">
     </form>
-</body>
-</html>
+{% endblock %}

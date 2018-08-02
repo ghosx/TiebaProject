@@ -1,6 +1,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+import json
 
 def getTBS(bduss):
     headers = {
@@ -11,20 +12,22 @@ def getTBS(bduss):
     url = 'http://tieba.baidu.com/dc/common/tbs'
     return requests.get(url=url,headers=headers).json()['tbs']
 
-def getUsernameByBduss(bduss):
+def getNameReplyAtByBduss(bduss):
     headers = {
         'Host':'tieba.baidu.com',
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
         'Cookie': 'BDUSS='+bduss,
     }
     url = 'https://tieba.baidu.com/mo/q-'
-    r = requests.get(url=url,headers=headers).text
-    name =  re.search(r">([\u4e00-\u9fa5a-zA-Z0-9]+)的i贴吧<",r)
-    if name is not None:
-        name = name.group(1)
-    else:
-        name = 'anonymous'
-    return name
+    try:
+        r = requests.get(url=url, headers=headers).text
+        name = re.search(r">([\u4e00-\u9fa5a-zA-Z0-9]+)的i贴吧<", r).group(1)
+        reply = re.search(r"回复我的\((\d+)\)", r).group(1)
+        at = re.search(r"@我的\((\d+)\)", r).group(1)
+    except Exception:
+        name,reply,at = None,None,None
+    finally:
+        return name,reply,at
 
 def getFavorite(bduss,stoken):
     headers = {
@@ -38,8 +41,6 @@ def getFavorite(bduss,stoken):
     weiye = int(re.search(r'pn=(\d+)">尾页',res).group(1))
     for i in range(1,weiye+1):
         print(i)
-        # if i == 2:
-        #     break
         url = url+'?&pn='+str(i)
         soup = BeautifulSoup(requests.get(url,headers=headers).text, 'html.parser').find('table').find_all('tr')[1:]
         for j in soup:
@@ -51,23 +52,123 @@ def getFavorite(bduss,stoken):
     print(a)
     return a
 
-def getStoken(bduss):
-    headers = {
-        'Host': 'tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
-        'Cookie': 'BDUSS=' + bduss,
-    }
-    url = 'https://passport.baidu.com/v2/api/?getapi&apiver=v3'
-    res = requests.get(url=url,headers=headers)
-    print(res.status_code)
 
 
 def getFid(bdname):
     url = 'http://tieba.baidu.com/f/commit/share/fnameShareApi?ie=utf-8&fname='+str(bdname)
     fid = requests.get(url).json()['data']['fid']
-    # print(fid)
     return fid
 
-# bduss = '1IxSXV5cUdHTEdmNGx5YWg5ZnY2eUpxUGZhdERzdGlMQX5IZzktWnI3ejM2b2RiQVFBQUFBJCQAAAAAAAAAAAEAAAC12ZM617fDzrXEt8XFo83eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPddYFv3XWBbM'
-# stoken = 'e7f5d88e4f9128fe12a5b0d76f9ec21c59a006e1b720bf4dd83c14dd645ad5c1'
+
+def HuiTie(bduss,content,tid,tbname):
+    fid = getFid(tbname)
+    tbs = getTBS(bduss)
+    headers = {
+        'Accept':"application/json, text/javascript, */*; q=0.01",
+        'Accept-Encoding':"gzip, deflate, br",
+        'Accept-Language':"zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        'Connection':"keep-alive",
+        'Content-Type': "application/x-www-form-urlencoded;charset=UTF-8",
+        'Cookie': 'BDUSS='+bduss,
+        'DNT':'1',
+        'Host':'tieba.baidu.com',
+        'Origin': 'https://tieba.baidu.com',
+        'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest',
+    }
+    data = {
+        'ie':'utf-8',
+        'kw':tbname,
+        'fid':fid,
+        'tid':tid,
+        'tbs':tbs,
+        '__type__':'reply',
+        'content':content,
+    }
+    url = 'https://tieba.baidu.com/f/commit/post/add'
+    r = requests.post(url=url,data=data,headers=headers).json()
+    return r
+
+def FaTie(bduss,title,content,tbname):
+    fid = getFid(tbname)
+    tbs = getTBS(bduss)
+    headers = {
+        'Accept': "application/json, text/javascript, */*; q=0.01",
+        'Accept-Encoding': "gzip, deflate, br",
+        'Accept-Language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        'Connection': "keep-alive",
+        'Content-Type': "application/x-www-form-urlencoded;charset=UTF-8",
+        'Cookie': 'BDUSS=' + bduss,
+        'DNT': '1',
+        'Host': 'tieba.baidu.com',
+        'Origin': 'https://tieba.baidu.com',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest',
+    }
+    data = {
+        'ie': 'utf-8',
+        'kw': tbname,
+        'fid': fid,
+        'tbs': tbs,
+        'title':title,
+        '__type__': 'reply',
+        'content': content,
+    }
+    url = 'https://tieba.baidu.com/f/commit/thread/add'
+    r = requests.post(url=url, data=data, headers=headers).json()
+    return r
+
+def getQid(tid,floor):
+    headers = {
+        'Host': 'tieba.baidu.com',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+    }
+    page = floor // 20 + 1
+    url = 'https://tieba.baidu.com/p/'+str(tid)+'?pn='+str(page)
+    print(url)
+    res = requests.get(url=url,headers=headers).text
+    qid = re.findall(r"/p/\d+\?pid=(\d+)&",res)
+    return qid[floor-1]
+
+def LouZhongLou(bduss,content,tbname,tid,floor):
+    fid = getFid(tbname)
+    tbs = getTBS(bduss)
+    qid = getQid(tid,floor)
+    headers = {
+        'Accept': "application/json, text/javascript, */*; q=0.01",
+        'Accept-Encoding': "gzip, deflate, br",
+        'Accept-Language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        'Connection': "keep-alive",
+        'Content-Type': "application/x-www-form-urlencoded;charset=UTF-8",
+        'Cookie': 'BDUSS=' + bduss,
+        'DNT': '1',
+        'Host': 'tieba.baidu.com',
+        'Origin': 'https://tieba.baidu.com',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest',
+    }
+    data = {
+        'ie': 'utf-8',
+        'kw': tbname,
+        'fid': fid,
+        'tid': tid,
+        'tbs': tbs,
+        'quote_id':qid,
+        'floor_num':floor,
+        'content': content,
+    }
+    print(data)
+    url = 'https://tieba.baidu.com/f/commit/post/add'
+    r = requests.post(url=url, data=data, headers=headers).json()
+    print(r)
+    return r
+
+
+bduss = 'VBmfmxkbFZEMWFaZ2xtQ1VPM35EZDhJeXZTajNhckVpWmlsWWF4M1NxVzM5b2xiQVFBQUFBJCQAAAAAAAAAAAEAAAC12ZM617fDzrXEt8XFo83eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALdpYlu3aWJbL'
+content = "亲爱的我喜欢你"
+tid = '5005863798'
+tbname = '从小立志做水比'
+title = "标题"
+floor = 3
+
 
