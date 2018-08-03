@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class User(models.Model):
+class TiebaUser(models.Model):
     bduss = models.CharField(max_length=192,verbose_name="BDUSS")
     username = models.CharField(max_length=30,verbose_name="贴吧用户名")
     email = models.EmailField(null=True,verbose_name="邮箱")
@@ -14,16 +14,17 @@ class User(models.Model):
         return self.username
 
 
-class Tieba(models.Model):
+class TiebaYunHui(models.Model):
     name = models.CharField(max_length=40,verbose_name="贴吧名")
-    fid = models.CharField(max_length=20,verbose_name="fid")
+    fid = models.CharField(max_length=20,verbose_name="贴吧id")
+    tid = models.CharField(max_length=20, verbose_name="帖子id")
     isLou = models.BooleanField(verbose_name="是否楼中楼")
-    floor = models.CharField(max_length=20,null=True,verbose_name="楼层号")
-    qid = models.CharField(max_length=20,null=True,verbose_name="楼层号编号")
-    tbjingyan = models.IntegerField(verbose_name="贴吧经验")
-    tbdengji = models.IntegerField(verbose_name="贴吧等级")
+    floor = models.CharField(max_length=20,null=True,verbose_name="楼层数")
+    qid = models.CharField(max_length=20,null=True,verbose_name="楼层数id")
+    tbjingyan = models.IntegerField(null=True,verbose_name="贴吧经验")
+    tbdengji = models.IntegerField(null=True,verbose_name="贴吧等级")
     add_time = models.DateTimeField(auto_now_add=True,verbose_name="插入时间")
-    user = models.ManyToManyField(User,verbose_name="所属用户")
+    user = models.ManyToManyField(TiebaUser,verbose_name="所属用户")
 
     def __str__(self):
         return self.name

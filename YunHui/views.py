@@ -2,7 +2,8 @@ from django.shortcuts import render,redirect
 from django.shortcuts import HttpResponse
 from . import utils
 import uuid
-from .models import Tieba,User
+from .models import TiebaYunHui,TiebaUser
+import json
 
 
 # Create your views here.
@@ -21,18 +22,16 @@ def index(request):
             name,reply,at = utils.getNameReplyAtByBduss(bduss)
             if name:
                 token = str(uuid.uuid1())
-                request.session['token'] = token
-                request.session['name'] = name
-                request.session['email'] = email
                 try:
-                    user = User.objects.get(username=name)
+                    user = TiebaUser.objects.get(username=name)
                     user.idDel = False;
                     user.bduss=bduss
                     user.email=email
                 except Exception:
-                    user = User(bduss=bduss, username=name, email=email, token=token)
+                    user = TiebaUser(bduss=bduss, username=name, email=email, token=token)
                 finally:
                     user.save()
+                    request.session['user'] = user.username
                     return redirect('addTz')
             else:
                 return HttpResponse("BDUSS以失效")
@@ -44,7 +43,7 @@ def delUser(request,uuid):
     elif request.method == "GET":
         token = uuid
         try:
-            user = User.objects.get(token=token)
+            user = TiebaUser.objects.get(token=token)
         except Exception :
             return HttpResponse("TOKEN有误，未查到相关用户")
         if user.idDel:
@@ -55,8 +54,8 @@ def delUser(request,uuid):
 
 
 def addTz(request):
-    name = request.session.get('name')
-    if name:
+    user = request.session.get('user')
+    if user:
         return render(request,'add.html')
     else:
         return redirect('index')
@@ -64,4 +63,26 @@ def addTz(request):
 def addtieze(request):
     if request.method == 'GET':
         return render(request,'add.html')
+    elif request.method == 'POST':
+        username = request.session.get('user')
+        user = TiebaUser.objects.get(username=username)
+        tbna = request.POST.get('tbname')
+        lou = request.POST.get('lou')
+        tid = request.POST.get('tid')
+        _time = request.POST.get('time')
+        floor = request.POST.get('floor')
+        fid = utils.getFid(tbna)
+        if lou == 'yes':
+            louBin = True
+            Qid = utils.getQid(tid,floor)
+        elif lou == 'no':
+            louBin = False
+            Qid = None
+        t = TiebaYunHui(name=tbna,fid=fid,tid=tid,isLou=louBin,floor=floor,qid=Qid)
+        t.save()
+        t.user.add(user)
+        t.save()
+        return HttpResponse('aaa')
+
+
 

@@ -59,6 +59,20 @@ def getFid(bdname):
     fid = requests.get(url).json()['data']['fid']
     return fid
 
+def getDengji(bduss,bdname):
+    headers = {
+        'Host': 'tieba.baidu.com',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'Cookie': 'BDUSS=' + bduss,
+    }
+    url = 'http://tieba.baidu.com/f?kw='+str(bdname)+'&ie=utf-8'
+    print(url)
+    print(headers)
+    res = requests.get(url=url,headers=headers).text
+    print(res)
+    return res
+
+
 
 def HuiTie(bduss,content,tid,tbname):
     fid = getFid(tbname)
@@ -119,15 +133,18 @@ def FaTie(bduss,title,content,tbname):
     return r
 
 def getQid(tid,floor):
+    floor = int(floor)
+    print('floor='+str(floor))
     headers = {
         'Host': 'tieba.baidu.com',
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
     }
     page = floor // 20 + 1
+    print('page='+str(page))
     url = 'https://tieba.baidu.com/p/'+str(tid)+'?pn='+str(page)
-    print(url)
     res = requests.get(url=url,headers=headers).text
     qid = re.findall(r"/p/\d+\?pid=(\d+)&",res)
+    print(qid)
     return qid[floor-1]
 
 def LouZhongLou(bduss,content,tbname,tid,floor):
@@ -163,12 +180,13 @@ def LouZhongLou(bduss,content,tbname,tid,floor):
     print(r)
     return r
 
-
+#
 bduss = 'VBmfmxkbFZEMWFaZ2xtQ1VPM35EZDhJeXZTajNhckVpWmlsWWF4M1NxVzM5b2xiQVFBQUFBJCQAAAAAAAAAAAEAAAC12ZM617fDzrXEt8XFo83eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALdpYlu3aWJbL'
 content = "亲爱的我喜欢你"
-tid = '5005863798'
+tid = '4217580380'
 tbname = '从小立志做水比'
 title = "标题"
 floor = 3
+bdname = "旬阳中学"
 
-
+getQid(tid,floor)

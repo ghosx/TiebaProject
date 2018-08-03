@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block main %}
-    {% if request.session.name %}
-        <h2>欢迎你 {{ request.session.name }}</h2>
+    {% if request.session.user %}
+        <h2>欢迎你 {{ request.session.user }}</h2>
             <form action="/addTZ/" method="post">
                 {% csrf_token %}
                 <p>贴吧名<input type="text" name="tbname"></p>
@@ -18,7 +18,7 @@
            $(function(){
               $(":radio").click(function(){
                 if($(this).val()=='yes'){
-                    $('#span').html('楼层号<input type="number" name="fid">');
+                    $('#span').html('楼层号<input type="number" name="floor">');
                 }else if ($(this).val()=='no'){
                     $('#span').html('');
                 }
