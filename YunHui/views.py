@@ -4,7 +4,7 @@ from . import utils
 import uuid
 from .models import Tieba,User
 import time
-
+from django.shortcuts import reverse
 
 # Create your views here.
 stoken = 'e7f5d88e4f9128fe12a5b0d76f9ec21c59a006e1b720bf4dd83c14dd645ad5c1'
@@ -16,26 +16,66 @@ def index(request):
     elif request.method == "POST":
         bduss = request.POST.get('bduss','default')
         if len(bduss) != 192:
-            return HttpResponse('BDUSS长度错误')
+            return render(request,'index.html',{'msg':'BDUSS长度错误～'})
         else:
             name,reply,at = utils.getNameReplyAtByBduss(bduss)
             if name:
                 token = str(uuid.uuid1())
                 try:
                     user = User.objects.get(username=name)
-                    request.session['type'] = '更新'
                     user.idDel = False
                     user.bduss=bduss
                 except Exception:
                     user = User(bduss=bduss, username=name, token=token)
-                    request.session['type'] = '添加'
                 finally:
                     user.save()
                     request.session['user'] = user.username
                     request.session['token'] = user.token
-                    return render(request, 'success.html')
+                    return redirect(reverse(info))
             else:
-                return render(request, 'success.html')
+                return redirect(reverse(info))
+
+def info(request):
+    if request.method == "GET":
+        token = request.session.get('token',None)
+        if token:
+            u = User.objects.get(token=token)
+            t = u.tieba_set.all()
+            return render(request, 'info.html',{'data':t})
+        else:
+            return render(request, 'info.html')
+    elif request.method == "POST":
+        return redirect('/')
+
+def login(request):
+    if request.method == "GET":
+        return render(request,'login.html')
+    elif request.method == "POST":
+        val = request.POST.get('unsure')
+        print(val)
+        if (len(val) != 192) and (len(val) != 36):
+            return render(request,'login.html',{'msg':'BDUSS或TOKEN长度错误'})
+        elif len(val) == 192:
+            try:
+                u = User.objects.get(bduss=val)
+                request.session['user'] = u.username
+                request.session['token'] = u.token
+                return redirect(reverse(info))
+            except Exception:
+                return render(request, 'login.html', {'msg': 'BDUSS错误'})
+        elif len(val) == 36:
+            try:
+                u = User.objects.get(token=val)
+                request.session['user'] = u.username
+                request.session['token'] = u.token
+                return redirect(reverse(info))
+            except Exception:
+                return render(request, 'login.html', {'msg': 'TOKEN错误'})
+
+def logout(request):
+    del request.session['user']
+    del request.session['token']
+    return redirect(reverse(index))
 
 
 def delUser(request,uuid):

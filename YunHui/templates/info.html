@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    {% if request.session.user %}
+        <h1>你的账户 {{ request.session.user }} 添加成功</h1>
+        <h3>以下是你的重要信息，请记住</h3>
+        <ol>
+            <h4><li>Token: <span style="color: red;font-size:110%;font-style: oblique">{{ request.session.token }} </span> 这是识别你身份的唯一凭证，服务器将不会保存</li></h4>
+        </ol>
+    <table class="table table-striped">
+        <thead>
+                <tr>
+                    <th>id</th>
+                    <th>贴吧</th>
+                    <th>帖子id</th>
+                    <th>是否楼中楼</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                </tr>
+        </thead>
+        <tbody>
+            {% for i in data %}
+                <tr>
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.name }}</td>
+                     <td>{{ i.fid }}</td>
+                    <td>{{ i.isLou }}</td>
+                    <td>{{ i.time }}</td>
+                    <td>
+                        <button class="btn">删除</button>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>nothing...</td>
+                    <td>nothing...</td>
+                     <td>nothing...</td>
+                    <td>nothing...</td>
+                    <td>nothing...</td>
+                    <td>nothing...</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        <a href="{% url 'add' %}">
+            <button><h6>添加帖子</h6></button>
+        </a>
+    </div>
+    <script>
+        $(function () {
+            $('.btn').click(function () {
+                var id = $(this).closest('tr').find('td').first().text();
+                $(this).closest('tr').remove();
+                {#todo:#}
+                {#向服务器发送删除请求#}
+            })
+        })
+    </script>
+    {% else %}
+        <h3>用户未登录</h3>
+    {% endif %}
+{% endblock %}
