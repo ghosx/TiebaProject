@@ -11,9 +11,9 @@
     <collation id="3" parent="1" name="BINARY"/>
     <collation id="4" parent="1" name="NOCASE"/>
     <collation id="5" parent="1" name="RTRIM"/>
-    <table id="6" parent="2" name="YunHui_tiebauser"/>
-    <table id="7" parent="2" name="YunHui_tiebayunhui"/>
-    <table id="8" parent="2" name="YunHui_tiebayunhui_user"/>
+    <table id="6" parent="2" name="YunHui_tieba"/>
+    <table id="7" parent="2" name="YunHui_tieba_user"/>
+    <table id="8" parent="2" name="YunHui_user"/>
     <table id="9" parent="2" name="auth_group"/>
     <table id="10" parent="2" name="auth_group_permissions"/>
     <table id="11" parent="2" name="auth_permission"/>
@@ -36,153 +36,154 @@
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
     </column>
-    <column id="22" parent="6" name="bduss">
+    <column id="22" parent="6" name="name">
+      <Position>2</Position>
+      <DataType>varchar(40)|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="23" parent="6" name="fid">
+      <Position>3</Position>
+      <DataType>varchar(20)|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="24" parent="6" name="tid">
+      <Position>4</Position>
+      <DataType>varchar(20)|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="25" parent="6" name="isLou">
+      <Position>5</Position>
+      <DataType>bool|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="26" parent="6" name="floor">
+      <Position>6</Position>
+      <DataType>varchar(20)|0s</DataType>
+    </column>
+    <column id="27" parent="6" name="qid">
+      <Position>7</Position>
+      <DataType>varchar(20)|0s</DataType>
+    </column>
+    <column id="28" parent="6" name="add_time">
+      <Position>8</Position>
+      <DataType>datetime|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="29" parent="6" name="time">
+      <Position>9</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <key id="30" parent="6">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="31" parent="7" name="id">
+      <Position>1</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="32" parent="7" name="tieba_id">
+      <Position>2</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="33" parent="7" name="user_id">
+      <Position>3</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="34" parent="7" name="YunHui_tieba_user_tieba_id_user_id_f3bf8350_uniq">
+      <ColNames>tieba_id
+user_id</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <index id="35" parent="7" name="YunHui_tieba_user_tieba_id_e2bd3b95">
+      <ColNames>tieba_id</ColNames>
+      <ColumnCollations></ColumnCollations>
+    </index>
+    <index id="36" parent="7" name="YunHui_tieba_user_user_id_ef53ffc1">
+      <ColNames>user_id</ColNames>
+      <ColumnCollations></ColumnCollations>
+    </index>
+    <key id="37" parent="7">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="38" parent="7">
+      <ColNames>tieba_id</ColNames>
+      <RefTableName>YunHui_tieba</RefTableName>
+      <RefColNames>id</RefColNames>
+      <Deferrable>1</Deferrable>
+      <InitiallyDeferred>1</InitiallyDeferred>
+    </foreign-key>
+    <foreign-key id="39" parent="7">
+      <ColNames>user_id</ColNames>
+      <RefTableName>YunHui_user</RefTableName>
+      <RefColNames>id</RefColNames>
+      <Deferrable>1</Deferrable>
+      <InitiallyDeferred>1</InitiallyDeferred>
+    </foreign-key>
+    <column id="40" parent="8" name="id">
+      <Position>1</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="41" parent="8" name="bduss">
       <Position>2</Position>
       <DataType>varchar(192)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="23" parent="6" name="username">
+    <column id="42" parent="8" name="username">
       <Position>3</Position>
       <DataType>varchar(30)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="24" parent="6" name="email">
+    <column id="43" parent="8" name="token">
       <Position>4</Position>
-      <DataType>varchar(254)|0s</DataType>
-    </column>
-    <column id="25" parent="6" name="token">
-      <Position>5</Position>
       <DataType>varchar(200)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="26" parent="6" name="created_time">
+    <column id="44" parent="8" name="created_time">
+      <Position>5</Position>
+      <DataType>datetime|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="45" parent="8" name="modified_time">
       <Position>6</Position>
       <DataType>datetime|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="27" parent="6" name="modified_time">
+    <column id="46" parent="8" name="success">
       <Position>7</Position>
-      <DataType>datetime|0s</DataType>
-      <NotNull>1</NotNull>
+      <DataType>integer|0s</DataType>
     </column>
-    <column id="28" parent="6" name="idDel">
+    <column id="47" parent="8" name="fail">
       <Position>8</Position>
+      <DataType>integer|0s</DataType>
+    </column>
+    <column id="48" parent="8" name="idDel">
+      <Position>9</Position>
       <DataType>bool|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="29" parent="6" name="sqlite_autoindex_YunHui_tiebauser_1">
+    <index id="49" parent="8" name="sqlite_autoindex_YunHui_user_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>token</ColNames>
       <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
-    <key id="30" parent="6">
+    <key id="50" parent="8">
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="31" parent="6">
+    <key id="51" parent="8">
       <ColNames>token</ColNames>
-      <UnderlyingIndexName>sqlite_autoindex_YunHui_tiebauser_1</UnderlyingIndexName>
+      <UnderlyingIndexName>sqlite_autoindex_YunHui_user_1</UnderlyingIndexName>
     </key>
-    <column id="32" parent="7" name="id">
-      <Position>1</Position>
-      <DataType>integer|0s</DataType>
-      <NotNull>1</NotNull>
-      <SequenceIdentity>1</SequenceIdentity>
-    </column>
-    <column id="33" parent="7" name="name">
-      <Position>2</Position>
-      <DataType>varchar(40)|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <column id="34" parent="7" name="fid">
-      <Position>3</Position>
-      <DataType>varchar(20)|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <column id="35" parent="7" name="tid">
-      <Position>4</Position>
-      <DataType>varchar(20)|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <column id="36" parent="7" name="isLou">
-      <Position>5</Position>
-      <DataType>bool|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <column id="37" parent="7" name="floor">
-      <Position>6</Position>
-      <DataType>varchar(20)|0s</DataType>
-    </column>
-    <column id="38" parent="7" name="qid">
-      <Position>7</Position>
-      <DataType>varchar(20)|0s</DataType>
-    </column>
-    <column id="39" parent="7" name="tbjingyan">
-      <Position>8</Position>
-      <DataType>integer|0s</DataType>
-    </column>
-    <column id="40" parent="7" name="tbdengji">
-      <Position>9</Position>
-      <DataType>integer|0s</DataType>
-    </column>
-    <column id="41" parent="7" name="add_time">
-      <Position>10</Position>
-      <DataType>datetime|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <key id="42" parent="7">
-      <ColNames>id</ColNames>
-      <Primary>1</Primary>
-    </key>
-    <column id="43" parent="8" name="id">
-      <Position>1</Position>
-      <DataType>integer|0s</DataType>
-      <NotNull>1</NotNull>
-      <SequenceIdentity>1</SequenceIdentity>
-    </column>
-    <column id="44" parent="8" name="tiebayunhui_id">
-      <Position>2</Position>
-      <DataType>integer|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <column id="45" parent="8" name="tiebauser_id">
-      <Position>3</Position>
-      <DataType>integer|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <index id="46" parent="8" name="YunHui_tiebayunhui_user_tiebayunhui_id_tiebauser_id_eefcfaa7_uniq">
-      <ColNames>tiebayunhui_id
-tiebauser_id</ColNames>
-      <ColumnCollations></ColumnCollations>
-      <Unique>1</Unique>
-    </index>
-    <index id="47" parent="8" name="YunHui_tiebayunhui_user_tiebayunhui_id_4e593726">
-      <ColNames>tiebayunhui_id</ColNames>
-      <ColumnCollations></ColumnCollations>
-    </index>
-    <index id="48" parent="8" name="YunHui_tiebayunhui_user_tiebauser_id_aee30689">
-      <ColNames>tiebauser_id</ColNames>
-      <ColumnCollations></ColumnCollations>
-    </index>
-    <key id="49" parent="8">
-      <ColNames>id</ColNames>
-      <Primary>1</Primary>
-    </key>
-    <foreign-key id="50" parent="8">
-      <ColNames>tiebayunhui_id</ColNames>
-      <RefTableName>YunHui_tiebayunhui</RefTableName>
-      <RefColNames>id</RefColNames>
-      <Deferrable>1</Deferrable>
-      <InitiallyDeferred>1</InitiallyDeferred>
-    </foreign-key>
-    <foreign-key id="51" parent="8">
-      <ColNames>tiebauser_id</ColNames>
-      <RefTableName>YunHui_tiebauser</RefTableName>
-      <RefColNames>id</RefColNames>
-      <Deferrable>1</Deferrable>
-      <InitiallyDeferred>1</InitiallyDeferred>
-    </foreign-key>
     <column id="52" parent="9" name="id">
       <Position>1</Position>
       <DataType>integer|0s</DataType>

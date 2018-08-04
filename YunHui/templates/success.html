@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <h1>恭喜你 {{ request.session.user }} {{ request.session.type }} 成功</h1>
+    <h3>以下是你的重要信息，请记住</h3>
+    <ol>
+        <li>Token: {{ request.session.token }}  这是识别你身份的唯一凭证，服务器将不会保存</li>
+    </ol>
+    <div>
+        点击以下链接添加帖子
+        <a href="{% url 'add' %}">
+            <button>测试</button>
+        </a>
+    </div>
+{% endblock %}

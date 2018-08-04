@@ -2,7 +2,7 @@
 {% block main %}
     {% if request.session.user %}
         <h2>欢迎你 {{ request.session.user }}</h2>
-            <form action="/addTZ/" method="post">
+            <form action="{% url 'add' %}" method="post">
                 {% csrf_token %}
                 <p>贴吧名<input type="text" name="tbname"></p>
                 <p>帖子id<input type="number" name="tid"></p>

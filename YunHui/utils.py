@@ -74,8 +74,7 @@ def getDengji(bduss,bdname):
 
 
 
-def HuiTie(bduss,content,tid,tbname):
-    fid = getFid(tbname)
+def HuiTie(bduss,content,tid,fid,tbname):
     tbs = getTBS(bduss)
     headers = {
         'Accept':"application/json, text/javascript, */*; q=0.01",
@@ -101,6 +100,7 @@ def HuiTie(bduss,content,tid,tbname):
     }
     url = 'https://tieba.baidu.com/f/commit/post/add'
     r = requests.post(url=url,data=data,headers=headers).json()
+    print(r)
     return r
 
 def FaTie(bduss,title,content,tbname):
@@ -143,14 +143,15 @@ def getQid(tid,floor):
     print('page='+str(page))
     url = 'https://tieba.baidu.com/p/'+str(tid)+'?pn='+str(page)
     res = requests.get(url=url,headers=headers).text
-    qid = re.findall(r"/p/\d+\?pid=(\d+)&",res)
+    qid = re.findall(r"post_content_(\d+)",res)
     print(qid)
-    return qid[floor-1]
+    try:
+        return qid[floor-1]
+    except Exception:
+        return qid[len(qid)-1]
 
-def LouZhongLou(bduss,content,tbname,tid,floor):
-    fid = getFid(tbname)
+def LouZhongLou(bduss,content,tbname,fid,tid,qid,floor):
     tbs = getTBS(bduss)
-    qid = getQid(tid,floor)
     headers = {
         'Accept': "application/json, text/javascript, */*; q=0.01",
         'Accept-Encoding': "gzip, deflate, br",
@@ -183,10 +184,7 @@ def LouZhongLou(bduss,content,tbname,tid,floor):
 #
 bduss = 'VBmfmxkbFZEMWFaZ2xtQ1VPM35EZDhJeXZTajNhckVpWmlsWWF4M1NxVzM5b2xiQVFBQUFBJCQAAAAAAAAAAAEAAAC12ZM617fDzrXEt8XFo83eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALdpYlu3aWJbL'
 content = "亲爱的我喜欢你"
-tid = '4217580380'
-tbname = '从小立志做水比'
-title = "标题"
-floor = 3
-bdname = "旬阳中学"
 
-getQid(tid,floor)
+
+# LouZhongLou(bduss,content,tbname,tid,qid)
+# HuiTie(bduss,content,tid,fid,tbname)
