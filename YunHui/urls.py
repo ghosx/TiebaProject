@@ -7,7 +7,8 @@ urlpatterns = [
     path('info/',views.info,name='info'),
     path('login/',views.login,name='login'),
     path('logout',views.logout,name='logout'),
-    path(r'api/del/user/<uuid>/',views.delUser,name="deluser"),
+    path(r'del/<str:id>/',views.delete,name="delete"),
+    path(r'about/',views.about,name='about'),
     path(r'add/',views.add,name="add"),
-    path(r'test/',views.test,name="test"),
+    path(r'do/',views.do,name="do"),
 ]

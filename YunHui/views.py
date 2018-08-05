@@ -5,9 +5,12 @@ import uuid
 from .models import Tieba,User
 import time
 from django.shortcuts import reverse
+import logging
 
 # Create your views here.
 stoken = 'e7f5d88e4f9128fe12a5b0d76f9ec21c59a006e1b720bf4dd83c14dd645ad5c1'
+logging.basicConfig(filename='./app.log',format='%(asctime)s %(filename)s[line:%(lineno)d] %(message)s',datefmt='%Y-%m-%d')
+
 
 
 def index(request):
@@ -78,20 +81,24 @@ def logout(request):
     return redirect(reverse(index))
 
 
-def delUser(request,uuid):
-    if request.method != "GET":
+def delete(request,id):
+    if request.method == "POST":
         return HttpResponse("请求方法错误")
     elif request.method == "GET":
-        token = uuid
-        try:
-            user = User.objects.get(token=token)
-        except Exception :
-            return HttpResponse("TOKEN有误，未查到相关用户")
-        if user.idDel:
-            return HttpResponse("用户不存在")
-        user.idDel = True
-        user.save()
-        return HttpResponse("删除成功")
+        user = request.session.get('user',None)
+        if user:
+            try:
+                u = User.objects.get(username=user)
+                t = Tieba.objects.get(id=id, user=u)
+                t.delete()
+                return redirect(reverse(info))
+            except Exception:
+                return render(request,'info.html',{'msg':'越权访问'})
+        else:
+            return render(request,'info.html',{'msg':'未登录'})
+
+
+
 
 def add(request):
     if request.method == 'GET':
@@ -99,15 +106,15 @@ def add(request):
     elif request.method == 'POST':
         username = request.session.get('user')
         user = User.objects.get(username=username)
-        tbna = request.POST.get('tbname')
         lou = request.POST.get('lou')
         tid = request.POST.get('tid')
         _time = request.POST.get('time')
         floor = request.POST.get('floor')
+        tbna = utils.getFname(tid)
         fid = utils.getFid(tbna)
         if lou == 'yes':
             louBin = True
-            Qid = utils.getQid(tid,floor)
+            Qid = utils.getQid(tid, floor)
         elif lou == 'no':
             louBin = False
             Qid = None
@@ -115,17 +122,39 @@ def add(request):
         t.save()
         t.user.add(user)
         t.save()
-        return HttpResponse("<script>alert('添加成功');history.go(-1);</script>")
+        msg = '帖子'+tid+'添加成功'
+        return render(request,'add.html',{'msg':msg})
 
-def test(request):
+def about(request):
+    return render(request,'about.html')
+
+def do(request):
     u = User.objects.all()
-    content = "正式测试"
+    content = "以下是你的重要信息，请记住"
     for i in u:
         for j in i.tieba_set.all():
             if time.localtime().tm_min % j.time == 0:
                 if j.isLou:
-                    utils.LouZhongLou(i.bduss,content,j.name,j.fid,j.tid,j.qid,j.floor)
+                    try:
+                        res = utils.LouZhongLou(i.bduss, content, j.name, j.fid, j.tid, j.qid, j.floor)
+                        if res['err_code'] == 0:
+                            j.success = j.success + 1
+                        else:
+                            j.fail = j.fail + 1
+                    except Exception as e:
+                        logging.info(e)
+                    finally:
+                        j.save()
                 else:
-                    utils.HuiTie(i.bduss,content,j.tid,j.fid,j.name)
+                    try:
+                        ser = utils.HuiTie(i.bduss, content, j.tid, j.fid, j.name)
+                        if ser['err_code'] == 0:
+                            j.success = j.success + 1
+                        else:
+                            j.fail = j.fail + 1
+                    except Exception as e:
+                        logging.info(e)
+                    finally:
+                        j.save()
     return HttpResponse('poi~')
 

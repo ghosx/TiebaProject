@@ -1,15 +1,20 @@
 {% extends 'base.html' %}
+{% block title %}
+    登录
+{% endblock %}
+
 {% block main %}
 
-    <h3>使用bduss或token均可登录</h3>
- <form action="" method="post">
+    <h2>推荐使用TOKEN</h2>
+     <form action="" method="post">
         {% csrf_token %}
-        BDUSS/TOKEN:<input type="text" name="unsure">
-        <input type="submit" name="submit" value="登录">
+        <p>BDUSS / TOKEN :<input type="text" name="unsure"></p>
+        <input type="reset" name="reset" class="btn btn-warning">
+        <input type="submit" name="submit" value="登录" class="btn btn-success">
     </form>
-    {% if msg %}
-        {{ msg }}
+        {% if msg %}
+             <p style="font-style: oblique;font-size: 110%;color: red;margin-top: 20px">{{ msg }}</p>
         {% else %}
-    {% endif %}
+        {% endif %}
 
 {% endblock %}

@@ -8,8 +8,6 @@ class User(models.Model):
     token = models.CharField(max_length=200,unique=True,verbose_name="个人TOKEN")
     created_time = models.DateTimeField(auto_now_add=True,verbose_name="提交时间")
     modified_time = models.DateTimeField(auto_now=True,verbose_name="修改时间")
-    success = models.IntegerField(null=True,default=0,verbose_name="成功次数")
-    fail = models.IntegerField(null=True,default=0,verbose_name="失败次数")
     idDel = models.BooleanField(default=False,verbose_name="是否删除")
 
     def __str__(self):
@@ -24,8 +22,8 @@ class Tieba(models.Model):
     floor = models.CharField(max_length=20,null=True,verbose_name="楼层数")
     qid = models.CharField(max_length=20,null=True,verbose_name="楼层数id")
     time = models.IntegerField(verbose_name="回复间隔",default=5)
-    # tbjingyan = models.IntegerField(null=True,verbose_name="贴吧经验")
-    # tbdengji = models.IntegerField(null=True,verbose_name="贴吧等级")
+    success = models.IntegerField(null=True, default=0, verbose_name="成功次数")
+    fail = models.IntegerField(null=True, default=0, verbose_name="失败次数")
     add_time = models.DateTimeField(auto_now_add=True,verbose_name="插入时间")
     user = models.ManyToManyField(User, verbose_name="所属用户")
 

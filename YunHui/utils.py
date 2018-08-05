@@ -6,7 +6,7 @@ import json
 def getTBS(bduss):
     headers = {
         'Host': 'tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
         'Cookie': 'BDUSS=' + bduss,
     }
     url = 'http://tieba.baidu.com/dc/common/tbs'
@@ -15,7 +15,7 @@ def getTBS(bduss):
 def getNameReplyAtByBduss(bduss):
     headers = {
         'Host':'tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
         'Cookie': 'BDUSS='+bduss,
     }
     url = 'https://tieba.baidu.com/mo/q-'
@@ -32,7 +32,7 @@ def getNameReplyAtByBduss(bduss):
 def getFavorite(bduss,stoken):
     headers = {
         'Host': 'tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
         'Cookie': 'BDUSS=' + bduss+';STOKEN='+stoken,
     }
     url = 'http://tieba.baidu.com/f/like/mylike'
@@ -62,7 +62,7 @@ def getFid(bdname):
 def getDengji(bduss,bdname):
     headers = {
         'Host': 'tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
         'Cookie': 'BDUSS=' + bduss,
     }
     url = 'http://tieba.baidu.com/f?kw='+str(bdname)+'&ie=utf-8'
@@ -86,7 +86,7 @@ def HuiTie(bduss,content,tid,fid,tbname):
         'DNT':'1',
         'Host':'tieba.baidu.com',
         'Origin': 'https://tieba.baidu.com',
-        'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest',
     }
     data = {
@@ -100,7 +100,7 @@ def HuiTie(bduss,content,tid,fid,tbname):
     }
     url = 'https://tieba.baidu.com/f/commit/post/add'
     r = requests.post(url=url,data=data,headers=headers).json()
-    print(r)
+    print(r['err_code'])
     return r
 
 def FaTie(bduss,title,content,tbname):
@@ -116,7 +116,7 @@ def FaTie(bduss,title,content,tbname):
         'DNT': '1',
         'Host': 'tieba.baidu.com',
         'Origin': 'https://tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest',
     }
     data = {
@@ -130,14 +130,15 @@ def FaTie(bduss,title,content,tbname):
     }
     url = 'https://tieba.baidu.com/f/commit/thread/add'
     r = requests.post(url=url, data=data, headers=headers).json()
+    print(r['err_code'])
     return r
 
-def getQid(tid,floor):
+def getQid(tid, floor):
     floor = int(floor)
     print('floor='+str(floor))
     headers = {
         'Host': 'tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
     }
     page = floor // 20 + 1
     print('page='+str(page))
@@ -149,6 +150,18 @@ def getQid(tid,floor):
         return qid[floor-1]
     except Exception:
         return qid[len(qid)-1]
+
+def getFname(tid):
+    headers = {
+        'Host': 'tieba.baidu.com',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
+    }
+    url = 'https://tieba.baidu.com/p/' + str(tid)
+    res = requests.get(url=url, headers=headers).text
+    TBname = re.search("fname=\"([^\"]+)\"", res).group(1)
+    print(TBname)
+    return TBname
+
 
 def LouZhongLou(bduss,content,tbname,fid,tid,qid,floor):
     tbs = getTBS(bduss)
@@ -162,7 +175,7 @@ def LouZhongLou(bduss,content,tbname,fid,tid,qid,floor):
         'DNT': '1',
         'Host': 'tieba.baidu.com',
         'Origin': 'https://tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest',
     }
     data = {
@@ -175,16 +188,23 @@ def LouZhongLou(bduss,content,tbname,fid,tid,qid,floor):
         'floor_num':floor,
         'content': content,
     }
-    print(data)
     url = 'https://tieba.baidu.com/f/commit/post/add'
     r = requests.post(url=url, data=data, headers=headers).json()
-    print(r)
+    print(r['err_code'])
     return r
 
 #
-bduss = 'VBmfmxkbFZEMWFaZ2xtQ1VPM35EZDhJeXZTajNhckVpWmlsWWF4M1NxVzM5b2xiQVFBQUFBJCQAAAAAAAAAAAEAAAC12ZM617fDzrXEt8XFo83eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALdpYlu3aWJbL'
-content = "亲爱的我喜欢你"
+if __name__ == '__main__':
+    bduss = 'VBmfmxkbFZEMWFaZ2xtQ1VPM35EZDhJeXZTajNhckVpWmlsWWF4M1NxVzM5b2xiQVFBQUFBJCQAAAAAAAAAAAEAAAC12ZM617fDzrXEt8XFo83eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALdpYlu3aWJbL'
+    bduss1 = '5EVG03VGcwcUpXbVBNT3FPNGtNUWFSWDI0aDE0ZS1iTzFFV2o3ZjJZREI4WTFiQVFBQUFBJCQAAAAAAAAAAAEAAACDNSxT0a7R9LPHudwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMFkZlvBZGZbUW'
+
+    content = "对于影响吧内正常交流的广告行为，系统会视情况给予删贴处理，行为严重者还会被给予封禁处罚的哦~"
+    tbname = '从小立志做水比'
+    fid = 13981795
+    tid = 5820774243
+    qid = 121247978202
+    floor = 3
+
+    HuiTie(bduss1, content, tid, fid, tbname)
 
 
-# LouZhongLou(bduss,content,tbname,tid,qid)
-# HuiTie(bduss,content,tid,fid,tbname)
