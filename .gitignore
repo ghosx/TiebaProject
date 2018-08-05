@@ -1,2 +1,3 @@
 venv/
-*.pyc
+TiebaProject/__pycache__/
+YunHui/__pycache__/
