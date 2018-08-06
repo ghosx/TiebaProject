@@ -1,0 +1,43 @@
+2018-08-06 base.py[line:93] Not Found: /favicon.ico
+2018-08-06 base.py[line:93] Not Found: /del//
+2018-08-06 base.py[line:93] Not Found: /switch/2/
+2018-08-06 base.py[line:93] Not Found: /switch/2/
+2018-08-06 exception.py[line:118] Internal Server Error: /add/
+Traceback (most recent call last):
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/bina/PycharmProjects/TiebaProject/YunHui/views.py", line 133, in add
+    tbna = utils.getFname(tid)
+  File "/home/bina/PycharmProjects/TiebaProject/YunHui/utils.py", line 161, in getFname
+    TBname = re.search("fname=\"([^\"]+)\"", res).group(1)
+AttributeError: 'NoneType' object has no attribute 'group'
+2018-08-06 exception.py[line:118] Internal Server Error: /add/
+Traceback (most recent call last):
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/bina/PycharmProjects/TiebaProject/YunHui/views.py", line 133, in add
+    tbna = utils.getFname(tid)
+  File "/home/bina/PycharmProjects/TiebaProject/YunHui/utils.py", line 161, in getFname
+    TBname = re.search("fname=\"([^\"]+)\"", res).group(1)
+AttributeError: 'NoneType' object has no attribute 'group'
+2018-08-06 exception.py[line:118] Internal Server Error: /add/
+Traceback (most recent call last):
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/home/bina/PycharmProjects/TiebaProject/venv/lib/python3.5/site-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/bina/PycharmProjects/TiebaProject/YunHui/views.py", line 133, in add
+    tbna = utils.getFname(tid)
+  File "/home/bina/PycharmProjects/TiebaProject/YunHui/utils.py", line 161, in getFname
+    TBname = re.search("fname=\"([^\"]+)\"", res).group(1)
+AttributeError: 'NoneType' object has no attribute 'group'

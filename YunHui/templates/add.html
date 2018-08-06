@@ -6,8 +6,12 @@
     {% if request.session.user %}
         <h2>欢迎您 {{ request.session.user }} </h2>
             {% if msg %}
-                <p class="bg-success">{{ msg }}</p>
+                {% if type == 'error' %}
+                    <p class="bg-danger">{{ msg }}</p>
                 {% else %}
+                    <p class="bg-success">{{ msg }}</p>
+                {% endif %}
+            {% else %}
             {% endif %}
             <form action="{% url 'add' %}" method="post">
                 {% csrf_token %}

@@ -1,3 +1,4 @@
 venv/
-TiebaProject/__pycache__/
-YunHui/__pycache__/
+TiebaProject/__pycache__/*
+YunHui/__pycache__
+db.sqlite3

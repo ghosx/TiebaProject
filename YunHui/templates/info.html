@@ -13,17 +13,19 @@
         </ol>
         {% if msg %}
             <p class="bg-danger">{{ msg }}</p>
-            {% else %}
-            {% endif %}
+        {% else %}
+        {% endif %}
     <table class="table table-striped">
         <thead>
                 <tr>
                     <th>id</th>
                     <th>贴吧</th>
-                    <th>帖子id</th>
-                    <th>是否楼中楼</th>
-                    <th>时间</th>
+                    <th>帖子</th>
+                    <th>楼中楼</th>
+                    <th>时间</th>s
                     <th>成功/失败</th>
+                    <th>暂停</th>
+                    <th>暂停次数</th>
                     <th>操作</th>
                 </tr>
         </thead>
@@ -33,22 +35,37 @@
                     <td>{{ i.id }}</td>
                     <td>{{ i.name }}</td>
                      <td>{{ i.tid }}</td>
-                    <td>
-                        {% if i.isLou %}
+                    <td>{% if i.isLou %}
                             {{ i.floor }}
-                            {% else %}
-                                否
+                        {% else %}
+                            否
                         {% endif %}
-
                     </td>
                     <td>{{ i.time }}</td>
                     <td>{{ i.success }} / {{ i.fail }}</td>
                     <td>
-                        <button class="btn">删除</button>
+                        {% if i.stop %}
+                            是
+                        {% else %}
+                            否
+                        {% endif %}
+                    </td>
+                    <td>{{ i.stop_times }}</td>
+                    <td>
+                        <button class="btn" id="del{{ i.id }}">删除</button>
+                        <button class="btn" id="switch{{ i.id }}">
+                            {% if i.stop %}
+                                开始
+                            {% else %}
+                                暂停
+                            {% endif %}
+                        </button>
                     </td>
                 </tr>
             {% empty %}
                 <tr>
+                    <td>nothing...</td>
+                    <td>nothing...</td>
                     <td>nothing...</td>
                     <td>nothing...</td>
                     <td>nothing...</td>
@@ -67,10 +84,26 @@
     </div>
     <script>
         $(function () {
-            $('.btn').click(function () {
+            $("[id^=del]").click(function () {
                 var id = $(this).closest('tr').find('td').first().text();
                 $(this).closest('tr').remove();
                 $.get('/del/'+id+'/')
+            })
+            $("[id^=switch]").click(function () {
+                var id = $(this).closest('tr').find('td').first().text();
+                var a = $.trim($(this).closest('tr').find('td:eq(6)').text());
+                if(a == '是'){
+                    $(this).closest('tr').find('td:eq(6)').text('否');
+                }else{
+                    $(this).closest('tr').find('td:eq(6)').text('是');
+                }
+                console.log();
+                if('开始'==$.trim($(this).closest('tr').find('td:eq(8) button:eq(1)').text())){
+                    $(this).closest('tr').find('td:eq(8) button:eq(1)').text('暂停');
+                }else{
+                    $(this).closest('tr').find('td:eq(8) button:eq(1)').text('开始');
+                }
+                $.get('/switch/'+id+'/');
             })
         })
     </script>
