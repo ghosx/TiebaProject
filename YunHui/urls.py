@@ -11,5 +11,6 @@ urlpatterns = [
     path(r'about/',views.about,name='about'),
     path(r'add/',views.add,name="add"),
     path(r'switch/<str:id>/',views.switch,name="switch"),
-    path(r'do/',views.do,name="do"),
+    path(r'bduss/',views.bduss,name="bduss"),
+    path(r'status/',views.status,name="status"),
 ]

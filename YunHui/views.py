@@ -150,9 +150,15 @@ def add(request):
         return render(request, 'add.html', {'msg': msg})
 
 def do(request):
-    return HttpResponse('do')
+    return render(request, 'bduss.html')
 
 def about(request):
     return render(request, 'about.html')
+
+def status(request):
+    tie = user.tieba_set.all().count()
+    user = User.objects.all().count()
+    success = 
+
 
 
