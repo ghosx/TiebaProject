@@ -12,5 +12,4 @@ urlpatterns = [
     path(r'add/',views.add,name="add"),
     path(r'switch/<str:id>/',views.switch,name="switch"),
     path(r'bduss/',views.bduss,name="bduss"),
-    path(r'status/',views.status,name="status"),
 ]

@@ -149,16 +149,12 @@ def add(request):
         msg = '帖子' + tid + '添加成功'
         return render(request, 'add.html', {'msg': msg})
 
-def do(request):
+def bduss(request):
     return render(request, 'bduss.html')
 
 def about(request):
     return render(request, 'about.html')
 
-def status(request):
-    tie = user.tieba_set.all().count()
-    user = User.objects.all().count()
-    success = 
 
 
 
