@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import json
 
 def getTBS(bduss):
+    # 获取tbs
     headers = {
         'Host': 'tieba.baidu.com',
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
@@ -13,6 +14,7 @@ def getTBS(bduss):
     return requests.get(url=url,headers=headers).json()['tbs']
 
 def getNameReplyAtByBduss(bduss):
+    # 获取贴吧用户名和at reply信息
     headers = {
         'Host':'tieba.baidu.com',
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
@@ -30,6 +32,7 @@ def getNameReplyAtByBduss(bduss):
         return name,reply,at
 
 def getFavorite(bduss,stoken):
+    # 获取用户关注的贴吧
     headers = {
         'Host': 'tieba.baidu.com',
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
@@ -55,11 +58,13 @@ def getFavorite(bduss,stoken):
 
 
 def getFid(bdname):
+    # 获取贴吧对用的fourm id
     url = 'http://tieba.baidu.com/f/commit/share/fnameShareApi?ie=utf-8&fname='+str(bdname)
     fid = requests.get(url).json()['data']['fid']
     return fid
 
 def getDengji(bduss,bdname):
+    # 获取贴吧等级
     headers = {
         'Host': 'tieba.baidu.com',
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
@@ -75,6 +80,7 @@ def getDengji(bduss,bdname):
 
 
 def HuiTie(bduss,content,tid,fid,tbname):
+    # 网页版回帖
     tbs = getTBS(bduss)
     headers = {
         'Accept':"application/json, text/javascript, */*; q=0.01",
@@ -104,6 +110,7 @@ def HuiTie(bduss,content,tid,fid,tbname):
     return r
 
 def FaTie(bduss,title,content,tbname):
+    # 网页版发帖
     fid = getFid(tbname)
     tbs = getTBS(bduss)
     headers = {
@@ -134,6 +141,7 @@ def FaTie(bduss,title,content,tbname):
     return r
 
 def getQid(tid, floor):
+    # 获取楼中楼的qid参数
     floor = int(floor)
     print('floor='+str(floor))
     headers = {
@@ -152,6 +160,7 @@ def getQid(tid, floor):
         return qid[len(qid)-1]
 
 def getFname(tid):
+    # 通过tid获取贴吧名字
     headers = {
         'Host': 'tieba.baidu.com',
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
@@ -164,6 +173,7 @@ def getFname(tid):
 
 
 def LouZhongLou(bduss,content,tbname,fid,tid,qid,floor):
+    # 网页端楼中楼
     tbs = getTBS(bduss)
     headers = {
         'Accept': "application/json, text/javascript, */*; q=0.01",
@@ -193,18 +203,53 @@ def LouZhongLou(bduss,content,tbname,fid,tid,qid,floor):
     print(r['err_code'])
     return r
 
+def encodeData(data):
+    SIGN_KEY = 'tiebaclient!!!'
+    s = ''
+    keys = data.keys()
+    for i in sorted(keys):
+        s += i + '=' + str(data[i])
+    sign = hashlib.md5((s + SIGN_KEY).encode('utf-8')).hexdigest().upper()
+    data.update({'sign': str(sign)})
+    return data
+
+def clientPost(bduss,tbname,tid,content):
+    # 客户端回帖模式
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Cookie': 'ka=open',
+        'User-Agent': 'bdtb for Android 9.3.8.5',
+        'Connection': 'close',
+        'Accept-Encoding': 'gzip',
+        'Host': 'c.tieba.baidu.com',
+    }
+
+    data = {
+        'BDUSS':bduss,
+        '_client_type':'2',
+        '_client_version':'9.3.8.5',
+        '_phone_imei':'000000000000000',
+        'anonymous':'1',
+        'content':content,
+        'fid':getFid(tbname),
+        'from':'1008621x',
+        'is_ad':'0',
+        'kw':tbname,
+        'model':'MI+5',
+        'net_type':'1',
+        'new_vcode':'1',
+        'tbs':getTBS(bduss),
+        'tid':tid,
+        'timestamp':str(int(time.time())),
+        'vcode_tag':'11',
+    }
+    data = encodeData(data)
+    url = 'http://c.tieba.baidu.com/c/c/post/add'
+    a = requests.post(url=url,data=data,headers=headers)
+    print(a.json())
+
 #
 if __name__ == '__main__':
-    bduss = 'VBmfmxkbFZEMWFaZ2xtQ1VPM35EZDhJeXZTajNhckVpWmlsWWF4M1NxVzM5b2xiQVFBQUFBJCQAAAAAAAAAAAEAAAC12ZM617fDzrXEt8XFo83eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALdpYlu3aWJbL'
-    bduss1 = '5EVG03VGcwcUpXbVBNT3FPNGtNUWFSWDI0aDE0ZS1iTzFFV2o3ZjJZREI4WTFiQVFBQUFBJCQAAAAAAAAAAAEAAACDNSxT0a7R9LPHudwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMFkZlvBZGZbUW'
-
-    content = "对于影响吧内正常交流的广告行为，系统会视情况给予删贴处理，行为严重者还会被给予封禁处罚的哦~"
-    tbname = '从小立志做水比'
-    fid = 13981795
-    tid = 5820774243
-    qid = 121247978202
-    floor = 3
-
-    HuiTie(bduss1, content, tid, fid, tbname)
+   pass
 
 
