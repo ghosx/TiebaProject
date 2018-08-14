@@ -5,15 +5,53 @@
 {% endblock %}
 
 {% block main %}
-    <h2>贴吧云回 Beta V0.1 </h2>
-        <form action="" method="post">
-            {% csrf_token %}
-            <p>BDUSS: <input type="text" name="bduss"></p>
-            <input type="reset" name="reset" class="btn btn-warning">
-            <input type="submit" name="submit" class="btn btn-success">
-        </form>
-        {% if msg %}
-            <p style="font-style: oblique;font-size: 110%;color: red;margin-top: 20px">{{ msg }}</p>
-            {% else %}
-        {% endif %}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">贴吧云回 Beta V0.1 </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-8 col-md-offset-2" >
+                        <div class="input-group">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <input type="text" class="form-control" placeholder="输入 BDUSS" name="bduss">
+                                <a href="{% url 'bduss' %}" type="button" class="btn btn-warning" >获取BDUSS</a>
+                                <input type="submit" name="submit" value="填好啦提交" class="btn btn-success">
+                            </form>
+                            {% if msg %}
+                                <p style="font-style: oblique;font-size: 110%;color: red;margin-top: 20px">{{ msg }}</p>
+                            {% else %}
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+         <div class="col-md-8 col-md-offset-2">
+             <h4># 本站共有用户：</h4>
+             <button type="button" class="btn btn-default btn-lg">
+              <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ data.user }}
+             </button>
+             <h4># 本站成功云回：</h4>
+             <button type="button" class="btn btn-default btn-lg">
+              <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span> {{ data.yunhui }}
+             </button>
+              <h4># 本站成功签到：</h4>
+             <button type="button" class="btn btn-default btn-lg">
+              <span class="glyphicon glyphicon-check" aria-hidden="true"></span> {{ data.sign }}
+             </button>
+         </div>
+    </div>
+
+
+
 {% endblock %}
+
+
+

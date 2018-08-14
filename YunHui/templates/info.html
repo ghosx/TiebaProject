@@ -9,7 +9,7 @@
         <h1>你的账户 {{ request.session.user }} 添加成功</h1>
         <h3>以下是你的重要信息，请记住</h3>
         <ol>
-            <h4><li>Token: <span style="color: red;font-size:110%;font-style: oblique">{{ request.session.token }} </span> 这是识别你身份的唯一凭证，凭此登录</li></h4>
+            <h4><li>SECRET: <span style="color: red;font-size:110%;font-style: oblique">{{ request.session.token }} </span> 这是识别你身份的唯一凭证，凭此登录</li></h4>
         </ol>
         {% if msg %}
             <p class="bg-danger">{{ msg }}</p>

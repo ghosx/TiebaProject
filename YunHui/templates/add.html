@@ -3,11 +3,13 @@
     添加帖子
 {% endblock %}
 {% block main %}
-    {% if request.session.user %}
-        <h2>欢迎您 {{ request.session.user }} </h2>
-            {% if msg %}
-                {% if type == 'error' %}
-                    <p class="bg-danger">{{ msg }}</p>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            {% if request.session.user %}
+                <h2>欢迎您 {{ request.session.user }} </h2>
+                {% if msg %}
+                    {% if type == 'error' %}
+                        <p class="bg-danger">{{ msg }}</p>
                 {% else %}
                     <p class="bg-success">{{ msg }}</p>
                 {% endif %}
@@ -24,7 +26,9 @@
                 <input type="reset" id="reset" value="重置" class="btn btn-warning">
                 <input type="submit" id="submit" value="提交" class="btn btn-success">
             </form>
-        <script>
+        </div>
+    </div>
+    <script>
            $(function(){
               $(":radio").click(function(){
                 if($(this).val()=='yes'){
