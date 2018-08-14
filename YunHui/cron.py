@@ -90,8 +90,10 @@ def sign():
     for i in u:
         tbs = utils.get_tbs(i.bduss)
         for j in i.sign_set.all():
-            res = utils.client_Sign(i.bduss,j.name,j.fid,tbs)
-            print('time=' + res[time] + '  error_code=' + res['error_code'])
-            if res['error_code'] == 0:
-                j.is_sign = True
+            if j.is_sign == False:
+                res = utils.client_Sign(i.bduss,j.name,j.fid,tbs)
+                print('time=' + res[time] + '  error_code=' + res['error_code'])
+                if res['error_code'] == '0':
+                    j.is_sign = True
+                    j.save()
 

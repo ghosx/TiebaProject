@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'yv#^ojr4v=0#!t%70&eijj^g)*^7)v^p(xl*td#aai3c6(h4e2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -131,8 +131,9 @@ SESSION_COOKIE_AGE = 1800
 
 CRONJOBS = [
     ('*/1 * * * *', 'YunHui.cron.do','>> do.log'),
-    ('30 20 * * *', 'YunHui.cron.update','> update.log'),
-    ('0 1 * * *', 'YunHui.cron.sign','> sign.log'),
-    ('0 12 * * *', 'YunHui.cron.sign','> sign.log'),
-    ('0 21 * * *', 'YunHui.cron.sign','> sign.log'),
+    ('0 23 * * *', 'YunHui.cron.update','>> update.log'),
+    ('0 1 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('0 14 * * *', 'YunHui.cron.update','> update.log'),
+    ('30 14 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('0 21 * * *', 'YunHui.cron.sign','>> sign.log'),
 ]

@@ -20,7 +20,8 @@ def index(request):
         data['yunhui'] = 0
         for i in Tieba.objects.all():
             data['yunhui'] += i.success
-        data['sign'] = Sign.objects.all().count()
+        data['sign'] = Sign.objects.filter(is_sign=True).count()
+        data['unsign'] = Sign.objects.filter(is_sign=False).count()
         return render(request, 'index.html',{'data':data})
     elif request.method == "POST":
         bduss = request.POST.get('bduss', None)
