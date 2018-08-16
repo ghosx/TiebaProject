@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'yv#^ojr4v=0#!t%70&eijj^g)*^7)v^p(xl*td#aai3c6(h4e2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'TiebaProject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Tieba',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
@@ -132,8 +136,8 @@ SESSION_COOKIE_AGE = 1800
 CRONJOBS = [
     ('*/1 * * * *', 'YunHui.cron.do','>> do.log'),
     ('0 23 * * *', 'YunHui.cron.update','>> update.log'),
-    ('0 1 * * *', 'YunHui.cron.sign','>> sign.log'),
-    ('0 14 * * *', 'YunHui.cron.update','> update.log'),
-    ('30 14 * * *', 'YunHui.cron.sign','>> sign.log'),
-    ('0 21 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('0 0 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('30 12 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('*/2 * * * *', 'YunHui.cron.new_update','>> new_update.log'),
+    ('*/2 * * * *', 'YunHui.cron.new_sign','>> new_sign.log'),
 ]

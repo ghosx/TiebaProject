@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
 from . import utils
 import uuid
-from .models import Tieba, User, Sign
+from .models import Tieba, User, Sign, Data
 from django.shortcuts import reverse
 import logging
 import requests
@@ -17,9 +17,7 @@ def index(request):
     if request.method == "GET":
         data = {}
         data['user'] = User.objects.all().count()
-        data['yunhui'] = 0
-        for i in Tieba.objects.all():
-            data['yunhui'] += i.success
+        data['yunhui'] = Data.objects.get(id=1).success
         data['sign'] = Sign.objects.filter(is_sign=True).count()
         data['unsign'] = Sign.objects.filter(is_sign=False).count()
         return render(request, 'index.html',{'data':data})
@@ -29,11 +27,11 @@ def index(request):
             if len(bduss) != 192:
                 return render(request,'index.html',{'msg':'BDUSS错误～'})
             name = utils.get_name(bduss)
+            print(name)
             if name:
                 token = str(uuid.uuid1())
                 try:
                     user = User.objects.get(username=name)
-                    user.idDel = False
                     user.bduss = bduss
                 except Exception:
                     user = User(bduss=bduss,username=name, token=token)

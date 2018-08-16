@@ -285,4 +285,12 @@ def client_Sign(bduss, kw, fid, tbs):
 
 #
 if __name__ == '__main__':
-    pass
+    bduss = 'Z0V3BsdUZzMzV5M01SOXZVOVM1VUNvSUFYb2ZtRjVxTHZrckFJYS1NSldsWnhiQVFBQUFBJCQAAAAAAAAAAAEAAAAOXOVAtcCyu76hysC85M7es6MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFYIdVtWCHVbd0'
+    # tbs = get_tbs(bduss)
+    a = get_favorite(bduss)
+    print(a)
+    # kw = 'bug'
+    # fid = get_fid(kw)
+    # res = client_Sign(bduss, kw, fid, tbs)
+    # print(res)
+    # pass
