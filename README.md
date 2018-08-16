@@ -18,6 +18,9 @@ python3 manage.py runserver
 
 执行完上述命令后访问 [http://127.0.0.1:8000/](http://127.0.0.1:8000/) 即可
 
+## 项目首页
+![ha.gif](https://i.loli.net/2018/08/16/5b7556bb2ce4e.png)
+
 ## emmmm.... 
 
 求 **Star** 求 **Follow**
@@ -26,6 +29,3 @@ python3 manage.py runserver
 
 [WTFPL – Do What the Fuck You Want to Public License](http://www.wtfpl.net/about/)
 
-
-
-![ha.gif](https://i.loli.net/2018/08/02/5b624708afee1.gif)
