@@ -26,7 +26,7 @@ def get_name(bduss):
         r = requests.get(url=url, headers=headers).text
         name = re.search(r">([\u4e00-\u9fa5a-zA-Z0-9]+)的i贴吧<", r).group(1)
     except Exception:
-        name = 'guest'
+        name = None
     finally:
         return name
 
@@ -44,10 +44,15 @@ def get_at(bduss):
         'timestamp': str(int(time.time())),
         'vcode_tag': '11',
     }
-    pass
+    data = encodeData(data)
+    url = 'http://c.tieba.baidu.com/c/u/feed/atme'
+    res = requests.post(url=url, data=data).json()
+    return res
 
 def get_favorite(bduss):
     # 客户端关注的贴吧
+    returnData = {}
+    i = 1
     data = {
             'BDUSS':bduss,
             '_client_type':'2',
@@ -55,17 +60,39 @@ def get_favorite(bduss):
             '_client_version':'9.7.8.0',
             '_phone_imei':'000000000000000',
             'from':'1008621y',
-            'page_size':'3000',
+            'page_no':'1',
+            'page_size':'200',
             'model':'MI+5',
             'net_type':'1',
             'timestamp':str(int(time.time())),
             'vcode_tag':'11',
         }
-
     data = encodeData(data)
     url = 'http://c.tieba.baidu.com/c/f/forum/like'
     res = requests.post(url=url,data=data).json()
-    return res
+    returnData = res
+    while 'has_more' in res and res['has_more'] == '1':
+        i = i + 1
+        data = {
+            'BDUSS': bduss,
+            '_client_type': '2',
+            '_client_id': 'wappc_1534235498291_488',
+            '_client_version': '9.7.8.0',
+            '_phone_imei': '000000000000000',
+            'from': '1008621y',
+            'page_no': str(i),
+            'page_size': '200',
+            'model': 'MI+5',
+            'net_type': '1',
+            'timestamp': str(int(time.time())),
+            'vcode_tag': '11',
+        }
+        data = encodeData(data)
+        url = 'http://c.tieba.baidu.com/c/f/forum/like'
+        res = requests.post(url=url, data=data).json()
+        returnData['forum_list']['non-gconforum'].append(res['forum_list']['non-gconforum'])
+        returnData['forum_list']['gconforum'].append(res['forum_list']['gconforum'])
+    return returnData
 
 
 def get_fid(bdname):
@@ -120,7 +147,6 @@ def get_qid(tid, floor):
     url = 'https://tieba.baidu.com/p/'+str(tid)+'?pn='+str(page)
     res = requests.get(url=url,headers=headers).text
     qid = re.findall(r"post_content_(\d+)",res)
-    print(qid)
     try:
         return qid[floor-1]
     except Exception:
@@ -134,9 +160,8 @@ def get_kw(tid):
     }
     url = 'https://tieba.baidu.com/p/' + str(tid)
     res = requests.get(url=url, headers=headers).text
-    TBname = re.search("fname=\"([^\"]+)\"", res).group(1)
-    print(TBname)
-    return TBname
+    kw = re.search("fname=\"([^\"]+)\"", res).group(1)
+    return kw
 
 
 def LZL(bduss, content, kw, fid, tid, qid, floor):
@@ -167,7 +192,6 @@ def LZL(bduss, content, kw, fid, tid, qid, floor):
     }
     url = 'https://tieba.baidu.com/f/commit/post/add'
     r = requests.post(url=url, data=data, headers=headers).json()
-    print(r['err_code'])
     return r
 
 def client_LZL(bduss, kw, fid, content, quote_id, tid):
@@ -204,8 +228,8 @@ def client_LZL(bduss, kw, fid, content, quote_id, tid):
         }
     data = encodeData(data)
     url = 'http://c.tieba.baidu.com/c/c/post/add'
-    a = requests.post(url=url,data=data,headers=headers).json()
-    return a
+    res = requests.post(url=url,data=data,headers=headers).json()
+    return res
 
 
 def encodeData(data):
@@ -278,19 +302,38 @@ def client_Sign(bduss, kw, fid, tbs):
     }
     data = encodeData(data)
     url = 'http://c.tieba.baidu.com/c/c/forum/sign'
-    a = requests.post(url=url,data=data).json()
-    return a
+    res = requests.post(url=url,data=data).json()
+    return res
+
+def tuling(content):
+    url = 'http://openapi.tuling123.com/openapi/api/v2'
+    data = {
+        "reqType":0,
+        "perception": {
+            "inputText": {
+                "text": content,
+            },
+        },
+        "userInfo": {
+            "apiKey": "0c124865769e486db0199d3e6a15b712",
+            "userId": "xunyangchengguan"
+        }
+    }
+    return requests.post(url=url,data=data).json()
 
 
-
-#
 if __name__ == '__main__':
-    bduss = 'Z0V3BsdUZzMzV5M01SOXZVOVM1VUNvSUFYb2ZtRjVxTHZrckFJYS1NSldsWnhiQVFBQUFBJCQAAAAAAAAAAAEAAAAOXOVAtcCyu76hysC85M7es6MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFYIdVtWCHVbd0'
-    # tbs = get_tbs(bduss)
-    a = get_favorite(bduss)
-    print(a)
-    # kw = 'bug'
-    # fid = get_fid(kw)
-    # res = client_Sign(bduss, kw, fid, tbs)
-    # print(res)
-    # pass
+    bduss = 'QtQkY3ZzFUZjNMVG4zcnZzN3o1MEUwMEd4enRESjZwMkY1flkxS25lMzhzNlZiQUFBQUFBJCQAAAAAAAAAAAEAAAA1ZABRsru21NXiysdJRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwmflv8Jn5bWD'
+    data = get_favorite(bduss)
+    for j in data['forum_list']['non-gconforum']:
+        if type(j) == list:
+            for m in j:
+                print(m['name'])
+        else:
+            print(j['name'])
+    for k in data['forum_list']['gconforum']:
+        if type(k) == list:
+            for n in k:
+                print(n['name'])
+        else:
+            print(k['name'])

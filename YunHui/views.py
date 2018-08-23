@@ -13,6 +13,11 @@ logging.basicConfig(filename='app.log', format='%(asctime)s %(filename)s[line:%(
                     datefmt='%Y-%m-%d')
 
 
+def test(request):
+
+    return HttpResponse('aaa')
+
+
 def index(request):
     if request.method == "GET":
         data = {}
@@ -27,7 +32,6 @@ def index(request):
             if len(bduss) != 192:
                 return render(request,'index.html',{'msg':'BDUSS错误～'})
             name = utils.get_name(bduss)
-            print(name)
             if name:
                 token = str(uuid.uuid1())
                 try:
@@ -41,7 +45,7 @@ def index(request):
                     request.session['token'] = user.token
                     return redirect(reverse(info))
             else:
-                return redirect(reverse(info))
+                return render(request, 'index.html', {'msg': 'BDUSS错误～'})
 
 
 def info(request):
@@ -140,9 +144,7 @@ def add(request):
         elif lou == 'no':
             louBin = False
             Qid = None
-        t = Tieba(name=tbna, fid=fid, tid=tid, isLou=louBin, floor=floor, qid=Qid, time=_time)
-        t.save()
-        t.user.add(user)
+        t = Tieba(name=tbna, fid=fid, tid=tid, isLou=louBin, floor=floor, qid=Qid, time=_time, user_id=user.pk)
         t.save()
         msg = '帖子' + tid + '添加成功'
         return render(request, 'add.html', {'msg': msg})

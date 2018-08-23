@@ -86,7 +86,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
@@ -136,8 +135,10 @@ SESSION_COOKIE_AGE = 1800
 CRONJOBS = [
     ('*/1 * * * *', 'YunHui.cron.do','>> do.log'),
     ('0 23 * * *', 'YunHui.cron.update','>> update.log'),
+    ('59 23 * * *', 'YunHui.cron.reset','>> reset.log'),
     ('0 0 * * *', 'YunHui.cron.sign','>> sign.log'),
     ('30 12 * * *', 'YunHui.cron.sign','>> sign.log'),
     ('*/2 * * * *', 'YunHui.cron.new_update','>> new_update.log'),
-    ('*/2 * * * *', 'YunHui.cron.new_sign','>> new_sign.log'),
+    ('*/5 * * * *', 'YunHui.cron.new_sign','>> new_sign.log'),
+    ('*/1 * * * *', 'YunHui.cron.robot','>> robot.log'),
 ]

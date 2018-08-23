@@ -3,7 +3,7 @@ from django.db import models
 
 class User(models.Model):
     bduss = models.CharField(max_length=192, verbose_name="BDUSS")
-    username = models.CharField(max_length=30, editable=False, verbose_name="贴吧用户名")
+    username = models.CharField(max_length=30, unique=True, editable=False, verbose_name="贴吧用户名")
     token = models.CharField(max_length=200, unique=True, editable=False, verbose_name="个人TOKEN")
     created_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="提交时间")
     modified_time = models.DateTimeField(auto_now=True, verbose_name="修改时间")
@@ -34,7 +34,7 @@ class Tieba(models.Model):
     stop = models.BooleanField(default=False, verbose_name="是否暂停")
     stop_times = models.IntegerField(null=True, default=0, verbose_name="暂停次数")
     add_time = models.DateTimeField(auto_now_add=True, verbose_name="插入时间")
-    user = models.ManyToManyField(User, verbose_name="所属用户")
+    user = models.ForeignKey(to=User,on_delete=models.CASCADE,verbose_name="所属用户",)
 
     def __str__(self):
         return self.name
@@ -53,7 +53,7 @@ class Sign(models.Model):
     level_id = models.IntegerField(null=True, default=0, verbose_name="当前等级")
     cur_score = models.IntegerField(null=True, default=0, verbose_name="当前经验")
     is_sign = models.BooleanField(default=False, verbose_name="是否签到")
-    user = models.ManyToManyField(User, verbose_name="所属用户")
+    user = models.ForeignKey(User,on_delete=models.CASCADE, verbose_name="所属用户")
 
     def __str__(self):
         return self.name
@@ -74,3 +74,22 @@ class Data(models.Model):
         table_name = 'data'
         verbose_name = '数据汇总'
         verbose_name_plural = verbose_name
+
+class Robot(models.Model):
+    thread_id = models.CharField(max_length=20,null=True, blank=True,verbose_name="帖子id")
+    post_id = models.CharField(max_length=20, verbose_name="楼层数id")
+    title = models.CharField(max_length=200, verbose_name="标题")
+    username = models.CharField(max_length=200,verbose_name="用户名")
+    is_fans = models.BooleanField(default=False, verbose_name="是粉丝")
+    fname = models.CharField(max_length=20,verbose_name='贴吧名')
+    content = models.CharField(max_length=200,verbose_name='内容')
+    time = models.CharField(max_length=20,verbose_name='时间')
+
+    def __str__(self):
+        return self.username+'在'+self.fname+'@了我'
+
+    class Mete:
+        table_name = 'robot'
+        verbose_name = '机器人'
+        verbose_name_plural = verbose_name
+
