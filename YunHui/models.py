@@ -13,6 +13,18 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
+    def 绑定贴吧(self):
+        return self.sign_set.all().count()
+
+    def 已签到(self):
+        return self.sign_set.all().filter(is_sign=1).count()
+
+    def 未签到(self):
+        return self.sign_set.all().filter(is_sign=0).count()
+
+    def 云回贴吧(self):
+        return self.tieba_set.all().count()
+
     class Mete:
         get_latest_by = "created_time"
         table_name = 'user'

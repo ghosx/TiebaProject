@@ -323,17 +323,4 @@ def tuling(content):
 
 
 if __name__ == '__main__':
-    bduss = 'QtQkY3ZzFUZjNMVG4zcnZzN3o1MEUwMEd4enRESjZwMkY1flkxS25lMzhzNlZiQUFBQUFBJCQAAAAAAAAAAAEAAAA1ZABRsru21NXiysdJRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwmflv8Jn5bWD'
-    data = get_favorite(bduss)
-    for j in data['forum_list']['non-gconforum']:
-        if type(j) == list:
-            for m in j:
-                print(m['name'])
-        else:
-            print(j['name'])
-    for k in data['forum_list']['gconforum']:
-        if type(k) == list:
-            for n in k:
-                print(n['name'])
-        else:
-            print(k['name'])
+    pass

@@ -7,7 +7,7 @@ class TiebaAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username','token','created_time',)
+    list_display = ('username','token','created_time','绑定贴吧','已签到','未签到','云回贴吧')
     search_fields = ('username',)
 
 class SignAdmin(admin.ModelAdmin):

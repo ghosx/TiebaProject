@@ -1,5 +1,5 @@
 from . import utils
-from .models import User,Sign,Data,Robot
+from .models import User,Sign,Data,Robot,Tieba
 import requests
 import logging
 import time
@@ -220,7 +220,6 @@ def new_sign():
             print(e)
 
 
-
 def robot():
     u = User.objects.get(username='旬阳城管')
     res = utils.get_at(u.bduss)
@@ -229,7 +228,7 @@ def robot():
     for i in range(int(at_num)):
         post_id = at_list[i]['post_id']
         title = at_list[i]['title']
-        content = at_list[i]['content']
+        content = at_list[i]['content'].strip('@旬阳城管 ').split(',')
         fname = at_list[i]['fname']
         is_fans = at_list[i]['replyer']['is_fans']
         thread_id = at_list[i]['thread_id']
@@ -238,19 +237,31 @@ def robot():
         fid = utils.get_fid(fname)
         if is_fans != '1':
             reply_content = '只有我的粉丝才可以at我 -_- #(乖)'
+            utils.client_LZL(u.bduss, fname, fid, reply_content, post_id, thread_id)
         else:
-            reply_content = '#(滑稽)'
-        try:
-            Robot.objects.get(thread_id=thread_id,post_id=post_id)
-        except Exception:
-            if Robot.objects.filter(username=name).count() > 20:
-                reply_content = '今天不陪你玩儿了 -_- #(乖)'
+            try:
+                user = User.objects.get(username=name)
+                if content[0] == 'reply':
+                    Tieba.objects.create(name=fname, fid=fid, tid=thread_id, isLou=False, time=content[1],
+                                         user_id=user.pk)
+                    reply_content = fname + '吧' + content[1] + "分钟/贴添加完毕"
+                elif content[0] == 'info':
+                    reply_content = '已签到：' + str(user.已签到()) + '未签到' + str(user.未签到()) + '已云回' + str(
+                        user.tieba_set.all().count())
+                else:
+                    reply_content = '命令错误 -_- #(乖)'
+            except Exception:
+                try:
+                    Robot.objects.get(thread_id=thread_id, post_id=post_id)
+                except Exception:
+                    if Robot.objects.filter(username=name).count() > 5:
+                        reply_content = '今天不陪你玩儿了 -_- #(乖)'
+                    else:
+                        reply_content = '#(滑稽)'
+                    Robot.objects.create(thread_id=thread_id,post_id=post_id,title=title,username=name,is_fans=is_fans,fname=fname,content=content,time=time)
+            finally:
                 utils.client_LZL(u.bduss, fname, fid, reply_content, post_id, thread_id)
-            else:
-                utils.client_LZL(u.bduss,fname,fid,reply_content,post_id,thread_id)
-                Robot.objects.create(thread_id=thread_id,post_id=post_id,title=title,username=name,is_fans=is_fans,fname=fname,content=content,time=time)
-        finally:
-            print(name+'@了我在'+fname)
+
 
 
 

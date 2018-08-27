@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'TiebaProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Tieba',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
-        'HOST': '127.0.0.1',
+        'NAME': 'tieba',
+        'USER': 'root',
+        'PASSWORD': 'xxxxxxxx',
+        'HOST': 'xxx.xxx.xxx.xxx',
         'PORT': '3306',
     }
 }
@@ -134,10 +134,11 @@ SESSION_COOKIE_AGE = 1800
 
 CRONJOBS = [
     ('*/1 * * * *', 'YunHui.cron.do','>> do.log'),
-    ('0 23 * * *', 'YunHui.cron.update','>> update.log'),
-    ('59 23 * * *', 'YunHui.cron.reset','>> reset.log'),
+    ('0 21 * * *', 'YunHui.cron.update','>> update.log'),
+    ('0 0 * * *', 'YunHui.cron.reset','>> reset.log'),
     ('0 0 * * *', 'YunHui.cron.sign','>> sign.log'),
-    ('30 12 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('0 3 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('0 22 * * *', 'YunHui.cron.sign','>> sign.log'),
     ('*/2 * * * *', 'YunHui.cron.new_update','>> new_update.log'),
     ('*/5 * * * *', 'YunHui.cron.new_sign','>> new_sign.log'),
     ('*/1 * * * *', 'YunHui.cron.robot','>> robot.log'),
