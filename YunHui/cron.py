@@ -140,6 +140,7 @@ def sign():
         except Exception as e:
             print(e)
 
+
 def reset():
     # 每日凌晨将签到状态复位
     Sign.objects.all().update(is_sign=False)
@@ -198,6 +199,7 @@ def new_sign():
         '340008':'在黑名单中',
         '340006':'贴吧目录出问题啦',
         '300003':'加载数据失败',
+        '3250001':'您的帐号涉及违规操作，现已被贴吧官方系统封禁',
     }
     u = User.objects.filter(flag=1)
     for i in u:
@@ -236,7 +238,7 @@ def robot():
         time = at_list[i]['time']
         fid = utils.get_fid(fname)
         if is_fans != '1':
-            reply_content = '只有我的粉丝才可以at我 -_- #(乖)'
+            reply_content = '只有我的粉丝才可以at我哦 -_- #(乖)'
             utils.client_LZL(u.bduss, fname, fid, reply_content, post_id, thread_id)
         else:
             try:
@@ -245,22 +247,46 @@ def robot():
                     Tieba.objects.create(name=fname, fid=fid, tid=thread_id, isLou=False, time=content[1],
                                          user_id=user.pk)
                     reply_content = fname + '吧' + content[1] + "分钟/贴添加完毕"
+                elif content[0] == 'del':
+                    Tieba.objects.filter(tid=thread_id).delete()
+                    reply_content = '删除成功'
                 elif content[0] == 'info':
-                    reply_content = '已签到：' + str(user.已签到()) + '未签到' + str(user.未签到()) + '已云回' + str(
-                        user.tieba_set.all().count())
+                    num = 0
+                    for y in user.tieba_set.all():
+                        num += y.success
+                    reply_content = '已签到' + str(user.已签到()) + '未签到' + str(user.未签到()) + '云回帖子共'+str(user.tieba_set.all().count())\
+                                    +'个'+ '已云回' + str(num)+'次'
+                elif content[0] == 'stop':
+                    num = 0
+                    for s in user.tieba_set.all():
+                        num += 1
+                        s.stop = True
+                        s.save()
+                    reply_content = str(num)+"个贴吧已经暂停云回"
+                elif content[0] == 'start':
+                    num = 0
+                    for s in user.tieba_set.all():
+                        num += 1
+                        s.stop = False
+                        s.save()
+                    reply_content = str(num)+"个贴吧已经开始云回"
+                elif content[0] == 'check':
+                    getusername = utils.check(user.bduss)
+                    if getusername is None:
+                        reply_content = "BDUSS已失效"
+                    else:
+                        reply_content = "BDUSS未失效"
+                elif content[0] == 'secret':
+                    reply_content = "[请及时删除本条回复，以免secret泄露]："+user.token
                 else:
                     reply_content = '命令错误 -_- #(乖)'
             except Exception:
-                try:
-                    Robot.objects.get(thread_id=thread_id, post_id=post_id)
-                except Exception:
-                    if Robot.objects.filter(username=name).count() > 5:
-                        reply_content = '今天不陪你玩儿了 -_- #(乖)'
-                    else:
-                        reply_content = '#(滑稽)'
-                    Robot.objects.create(thread_id=thread_id,post_id=post_id,title=title,username=name,is_fans=is_fans,fname=fname,content=content,time=time)
+                reply_content = '#(滑稽)'
             finally:
                 utils.client_LZL(u.bduss, fname, fid, reply_content, post_id, thread_id)
+                Robot.objects.create(thread_id=thread_id, post_id=post_id, title=title, username=name, is_fans=is_fans,
+                                     fname=fname, content=content, time=time)
+
 
 
 

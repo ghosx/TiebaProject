@@ -14,49 +14,7 @@ logging.basicConfig(filename='app.log', format='%(asctime)s %(filename)s[line:%(
 
 
 def test(request):
-    u = User.objects.get(username='旬阳城管')
-    res = utils.get_at(u.bduss)
-    at_num = res['message']['atme']
-    at_list = res['at_list']
-    for i in range(int(at_num)):
-        post_id = at_list[i]['post_id']
-        title = at_list[i]['title']
-        content = at_list[i]['content'].strip('@旬阳城管 ').split(',')
-        fname = at_list[i]['fname']
-        is_fans = at_list[i]['replyer']['is_fans']
-        thread_id = at_list[i]['thread_id']
-        name = at_list[i]['replyer']['name']
-        time = at_list[i]['time']
-        fid = utils.get_fid(fname)
-        if is_fans != '1':
-            reply_content = '只有我的粉丝才可以at我 -_- #(乖)'
-            utils.client_LZL(u.bduss, fname, fid, reply_content, post_id, thread_id)
-            return HttpResponse('aaaa')
-        else:
-            try:
-                user = User.objects.get(username=name)
-                if content[0] == 'reply':
-                    Tieba.objects.create(name=fname, fid=fid, tid=thread_id, isLou=False, time=content[1],
-                                         user_id=user.pk)
-                    reply_content = fname + '吧' + content[1] + "分钟/贴添加完毕"
-                elif content[0] == 'info':
-                    reply_content = '已签到：' + str(user.已签到()) + '未签到' + str(user.未签到()) + '已云回' + str(
-                        user.tieba_set.all().count())
-                else:
-                    reply_content = '命令错误 -_- #(乖)'
-            except Exception:
-                try:
-                    Robot.objects.get(thread_id=thread_id, post_id=post_id)
-                except Exception:
-                    if Robot.objects.filter(username=name).count() > 5:
-                        reply_content = '今天不陪你玩儿了 -_- #(乖)'
-                    else:
-                        reply_content = '#(滑稽)'
-                    Robot.objects.create(thread_id=thread_id, post_id=post_id, title=title, username=name,
-                                         is_fans=is_fans, fname=fname, content=content, time=time)
-            finally:
-                utils.client_LZL(u.bduss, fname, fid, reply_content, post_id, thread_id)
-                return HttpResponse('aaaa')
+    return HttpResponse('test')
 
 
 def index(request):
@@ -66,6 +24,7 @@ def index(request):
         data['yunhui'] = Data.objects.get(id=1).success
         data['sign'] = Sign.objects.filter(is_sign=True).count()
         data['unsign'] = Sign.objects.filter(is_sign=False).count()
+        data['robot'] = Robot.objects.all().count()
         return render(request, 'index.html',{'data':data})
     elif request.method == "POST":
         bduss = request.POST.get('bduss', None)
@@ -225,3 +184,6 @@ def bduss(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def robot(request):
+    return render(request, 'robot.html')

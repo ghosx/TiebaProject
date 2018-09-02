@@ -2,7 +2,8 @@ import requests
 import re
 import hashlib
 import time
-import json
+import asyncio
+
 
 def get_tbs(bduss):
     # 获取tbs
@@ -69,7 +70,7 @@ def get_favorite(bduss):
         }
     data = encodeData(data)
     url = 'http://c.tieba.baidu.com/c/f/forum/like'
-    res = requests.post(url=url,data=data).json()
+    res = requests.post(url=url,data=data,timeout=2).json()
     returnData = res
     while 'has_more' in res and res['has_more'] == '1':
         i = i + 1
@@ -89,7 +90,7 @@ def get_favorite(bduss):
         }
         data = encodeData(data)
         url = 'http://c.tieba.baidu.com/c/f/forum/like'
-        res = requests.post(url=url, data=data).json()
+        res = requests.post(url=url, data=data,timeout=2).json()
         returnData['forum_list']['non-gconforum'].append(res['forum_list']['non-gconforum'])
         returnData['forum_list']['gconforum'].append(res['forum_list']['gconforum'])
     return returnData
@@ -98,7 +99,7 @@ def get_favorite(bduss):
 def get_fid(bdname):
     # 获取贴吧对用的fourm id
     url = 'http://tieba.baidu.com/f/commit/share/fnameShareApi?ie=utf-8&fname='+str(bdname)
-    fid = requests.get(url).json()['data']['fid']
+    fid = requests.get(url,timeout=2).json()['data']['fid']
     return fid
 
 
@@ -128,7 +129,7 @@ def Post(bduss, content, tid, fid, tbname):
         'content':content,
     }
     url = 'https://tieba.baidu.com/f/commit/post/add'
-    r = requests.post(url=url,data=data,headers=headers).json()
+    r = requests.post(url=url,data=data,headers=headers,timeout=2).json()
     print(r['err_code'])
     return r
 
@@ -145,7 +146,7 @@ def get_qid(tid, floor):
     page = floor // 20 + 1
     print('page='+str(page))
     url = 'https://tieba.baidu.com/p/'+str(tid)+'?pn='+str(page)
-    res = requests.get(url=url,headers=headers).text
+    res = requests.get(url=url,headers=headers,timeout=2).text
     qid = re.findall(r"post_content_(\d+)",res)
     try:
         return qid[floor-1]
@@ -159,7 +160,7 @@ def get_kw(tid):
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
     }
     url = 'https://tieba.baidu.com/p/' + str(tid)
-    res = requests.get(url=url, headers=headers).text
+    res = requests.get(url=url, headers=headers,timeout=2).text
     kw = re.search("fname=\"([^\"]+)\"", res).group(1)
     return kw
 
@@ -191,7 +192,7 @@ def LZL(bduss, content, kw, fid, tid, qid, floor):
         'content': content,
     }
     url = 'https://tieba.baidu.com/f/commit/post/add'
-    r = requests.post(url=url, data=data, headers=headers).json()
+    r = requests.post(url=url, data=data, headers=headers,timeout=2).json()
     return r
 
 def client_LZL(bduss, kw, fid, content, quote_id, tid):
@@ -228,7 +229,7 @@ def client_LZL(bduss, kw, fid, content, quote_id, tid):
         }
     data = encodeData(data)
     url = 'http://c.tieba.baidu.com/c/c/post/add'
-    res = requests.post(url=url,data=data,headers=headers).json()
+    res = requests.post(url=url,data=data,headers=headers,timeout=2).json()
     return res
 
 
@@ -274,7 +275,7 @@ def client_Post(bduss, kw, tid, fid, content):
     }
     data = encodeData(data)
     url = 'http://c.tieba.baidu.com/c/c/post/add'
-    a = requests.post(url=url,data=data,headers=headers).json()
+    a = requests.post(url=url,data=data,headers=headers,timeout=2).json()
     return a
 
 def client_Sign(bduss, kw, fid, tbs):
@@ -305,6 +306,7 @@ def client_Sign(bduss, kw, fid, tbs):
     res = requests.post(url=url,data=data).json()
     return res
 
+
 def tuling(content):
     url = 'http://openapi.tuling123.com/openapi/api/v2'
     data = {
@@ -321,6 +323,8 @@ def tuling(content):
     }
     return requests.post(url=url,data=data).json()
 
+def check(bduss):
+    return get_name(bduss)
 
 if __name__ == '__main__':
     pass

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+    机器人
+{% endblock %}
+
+{% block main %}
+    <div style="margin-top: 3%">
+        <h2># 机器人</h2>
+        <hr>
+        <h4>命令如下：</h4>
+        <ul>
+            <li><h5>在要云回的帖子回复：<code>reply,5@旬阳城管</code>  [5为回复间隔，单位分钟]</h5></li>
+            <li><h5>在要删除云回的帖子回复：<code>del@旬阳城管</code>  [即可删除云回]</h5></li>
+            <li><h5>在任意帖子回复：<code>info@旬阳城管</code>   [查看签到云回等信息]</h5></li>
+            <li><h5>在任意帖子回复：<code>start@旬阳城管</code>   [开启全部云回]</h5></li>
+            <li><h5>在任意帖子回复：<code>stop@旬阳城管</code>   [关闭全部云回]</h5></li>
+            <li><h5>在任意帖子回复：<code>check@旬阳城管</code>   [检查BDUSS是否失效]</h5></li>
+            <li><h5>等待更新，如果你有好的点子欢迎进群分享</h5></li>
+        </ul>
+    </div>
+
+{% endblock %}

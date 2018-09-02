@@ -453,3 +453,4 @@ Traceback (most recent call last):
   File "C:\Users\x86\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\base.py", line 139, in _get_response
     "returned None instead." % (callback.__module__, view_name)
 ValueError: The view YunHui.views.test didn't return an HttpResponse object. It returned None instead.
+2018-08-30 base.py[line:93] Not Found: /favicon.ico

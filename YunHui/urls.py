@@ -12,5 +12,6 @@ urlpatterns = [
     path(r'add/',views.add,name="add"),
     path(r'switch/<str:id>/',views.switch,name="switch"),
     path(r'bduss/',views.bduss,name="bduss"),
+    path(r'robot/',views.robot,name='robot'),
     path(r'test/',views.test,name='test'),
 ]
