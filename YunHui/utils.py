@@ -73,6 +73,10 @@ def get_favorite(bduss):
     url = 'http://c.tieba.baidu.com/c/f/forum/like'
     res = requests.post(url=url,data=data,timeout=2).json()
     returnData = res
+    if 'non-gconforum' not in returnData['forum_list']:
+        returnData['forum_list']['non-gconforum'] = []
+    if 'gconforum' not in returnData['forum_list']:
+        returnData['forum_list']['gconforum'] = []
     while 'has_more' in res and res['has_more'] == '1':
         i = i + 1
         data = {
@@ -83,7 +87,7 @@ def get_favorite(bduss):
             '_phone_imei': '000000000000000',
             'from': '1008621y',
             'page_no': str(i),
-            'page_size': '50',
+            'page_size': '200',
             'model': 'MI+5',
             'net_type': '1',
             'timestamp': str(int(time.time())),
@@ -308,22 +312,6 @@ def client_Sign(bduss, kw, fid, tbs):
     res = requests.post(url=url,data=data,timeout=1).json()
     return res
 
-
-def tuling(content):
-    url = 'http://openapi.tuling123.com/openapi/api/v2'
-    data = {
-        "reqType":0,
-        "perception": {
-            "inputText": {
-                "text": content,
-            },
-        },
-        "userInfo": {
-            "apiKey": "0c124865769e486db0199d3e6a15b712",
-            "userId": "xunyangchengguan"
-        }
-    }
-    return requests.post(url=url,data=data).json()
 
 def check(bduss):
     return get_name(bduss)
