@@ -25,6 +25,7 @@ def get_name(bduss):
     url = 'https://tieba.baidu.com/mo/q-'
     try:
         r = requests.get(url=url, headers=headers).text
+        print(r)
         name = re.search(r">([\u4e00-\u9fa5a-zA-Z0-9]+)的i贴吧<", r).group(1)
     except Exception:
         name = None
@@ -82,7 +83,7 @@ def get_favorite(bduss):
             '_phone_imei': '000000000000000',
             'from': '1008621y',
             'page_no': str(i),
-            'page_size': '200',
+            'page_size': '50',
             'model': 'MI+5',
             'net_type': '1',
             'timestamp': str(int(time.time())),
@@ -91,8 +92,10 @@ def get_favorite(bduss):
         data = encodeData(data)
         url = 'http://c.tieba.baidu.com/c/f/forum/like'
         res = requests.post(url=url, data=data,timeout=2).json()
-        returnData['forum_list']['non-gconforum'].append(res['forum_list']['non-gconforum'])
-        returnData['forum_list']['gconforum'].append(res['forum_list']['gconforum'])
+        if 'non-gconforum' in res['forum_list']:
+            returnData['forum_list']['non-gconforum'].append(res['forum_list']['non-gconforum'])
+        if 'gconforum' in res['forum_list']:
+            returnData['forum_list']['gconforum'].append(res['forum_list']['gconforum'])
     return returnData
 
 
@@ -130,7 +133,6 @@ def Post(bduss, content, tid, fid, tbname):
     }
     url = 'https://tieba.baidu.com/f/commit/post/add'
     r = requests.post(url=url,data=data,headers=headers,timeout=2).json()
-    print(r['err_code'])
     return r
 
 
@@ -303,7 +305,7 @@ def client_Sign(bduss, kw, fid, tbs):
     }
     data = encodeData(data)
     url = 'http://c.tieba.baidu.com/c/c/forum/sign'
-    res = requests.post(url=url,data=data).json()
+    res = requests.post(url=url,data=data,timeout=1).json()
     return res
 
 

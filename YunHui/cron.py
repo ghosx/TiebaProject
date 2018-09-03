@@ -114,20 +114,21 @@ def update():
             Sign.objects.bulk_create(datalist)
 
 def sign():
-    # 每日签到
+    # 签到
     data = {
         '0': '签到成功',
         '160002': '已经签过到了',
         '340008': '在黑名单中',
         '340006': '贴吧目录出问题啦',
         '300003': '加载数据失败',
+        '3250001': '您的帐号涉及违规操作，现已被贴吧官方系统封禁',
     }
     u = User.objects.all()
     for i in u:
         try:
             tbs = utils.get_tbs(i.bduss)
             for j in i.sign_set.all():
-                if j.is_sign is False:
+                if j.is_sign == False:
                     res = utils.client_Sign(i.bduss, j.name, j.fid, tbs)
                     if res['error_code'] in data:
                         j.is_sign = True
