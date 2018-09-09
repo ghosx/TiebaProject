@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tieba,User,Sign
+from .models import Tieba,User,Sign,Robot
 
 class TiebaAdmin(admin.ModelAdmin):
     list_display = ('name','fid','time','success','fail','add_time',)
@@ -14,6 +14,11 @@ class SignAdmin(admin.ModelAdmin):
     list_display = ('name','fid','level_id','cur_score','is_sign',)
     search_fields = ('name','fid','level_id',)
 
+class RobotAdmin(admin.ModelAdmin):
+    list_display = ('thread_id','title','username','is_fans','fname','content','time')
+    search_fields = ('thread_id','title','username','fname','content','time')
+
 admin.site.register(Tieba, TiebaAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Sign, SignAdmin)
+admin.site.register(Robot,RobotAdmin)
