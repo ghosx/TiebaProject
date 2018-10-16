@@ -3,6 +3,7 @@ from .models import User,Sign,Data,Robot,Tieba
 import requests
 import logging
 import time
+import random
 
 # 定时任务 设置在setting.py
 # flag = 0  默认（未update,未sign）
@@ -295,7 +296,18 @@ def robot():
                 Robot.objects.create(thread_id=thread_id, post_id=post_id, title=title, username=name, is_fans=is_fans,
                                      fname=fname, content=content, time=time)
 
-
+def check_bduss():
+    u = User.objects.all()
+    robot = User.objects.get(username='旬阳城管')
+    queue = []
+    for i in u:
+        if utils.check(i.bduss) == None:
+            queue.append(i)
+    for q in queue:
+        content = '@'+q.username+' 你的BDUSS已经失效，请及时更新以免断签~'
+        print(content)
+        utils.client_Post(robot.bduss,'从小立志做水比',5827225620,13981795,content)
+        time.sleep(random.randint(60,300))
 
 
 

@@ -136,10 +136,9 @@ CRONJOBS = [
     ('*/1 * * * *', 'YunHui.cron.do','>> do.log'),
     ('0 21 * * *', 'YunHui.cron.update','>> update.log'),
     ('0 0 * * *', 'YunHui.cron.reset','>> reset.log'),
-    ('0 0 * * *', 'YunHui.cron.sign','>> sign.log'),
-    ('0 4 * * *', 'YunHui.cron.sign','>> sign.log'),
-    ('0 22 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('0 */2 * * *', 'YunHui.cron.sign','>> sign.log'),
     ('*/5 * * * *', 'YunHui.cron.new_update','>> new_update.log'),
     ('*/30 * * * *', 'YunHui.cron.new_sign','>> new_sign.log'),
     ('*/2 * * * *', 'YunHui.cron.robot','>> robot.log'),
+    ('0 7 * * *', 'YunHui.cron.check_bduss()','>> check_bduss.log'),
 ]

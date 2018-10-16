@@ -25,7 +25,6 @@ def get_name(bduss):
     url = 'https://tieba.baidu.com/mo/q-'
     try:
         r = requests.get(url=url, headers=headers).text
-        print(r)
         name = re.search(r">([\u4e00-\u9fa5a-zA-Z0-9]+)的i贴吧<", r).group(1)
     except Exception:
         name = None
@@ -144,13 +143,11 @@ def Post(bduss, content, tid, fid, tbname):
 def get_qid(tid, floor):
     # 获取楼中楼的qid参数
     floor = int(floor)
-    print('floor='+str(floor))
     headers = {
         'Host': 'tieba.baidu.com',
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
     }
     page = floor // 20 + 1
-    print('page='+str(page))
     url = 'https://tieba.baidu.com/p/'+str(tid)+'?pn='+str(page)
     res = requests.get(url=url,headers=headers,timeout=2).text
     qid = re.findall(r"post_content_(\d+)",res)
