@@ -13,6 +13,9 @@ pip3 install -r requirements.txt
 python3 manage.py crontab add
 python3 manage.py makemigrations
 python3 manage.py migrate
+```
+连接数据库,在YunHui_data表中添加一条 id=1,success=0的纪录 (这一块目前需要手动实现,后期会改为自动操作)
+```
 python3 manage.py runserver
 ```
 
