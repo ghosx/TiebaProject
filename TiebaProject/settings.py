@@ -75,14 +75,21 @@ WSGI_APPLICATION = 'TiebaProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'tieba',
+#         'USER': 'root',
+#         'PASSWORD': 'xxxxxx',
+#         'HOST': 'xxx.xxx.xxx.xxx',
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tieba',
-        'USER': 'root',
-        'PASSWORD': 'xxxxxx',
-        'HOST': 'xxx.xxx.xxx.xxx',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'Tieba',
     }
 }
 
@@ -140,5 +147,5 @@ CRONJOBS = [
     ('*/5 * * * *', 'YunHui.cron.new_update','>> new_update.log'),
     ('*/30 * * * *', 'YunHui.cron.new_sign','>> new_sign.log'),
     ('*/2 * * * *', 'YunHui.cron.robot','>> robot.log'),
-    ('0 7 * * *', 'YunHui.cron.check_bduss()','>> check_bduss.log'),
+    ('0 7 * * *', 'YunHui.cron.check_bduss','>> check_bduss.log'),
 ]
