@@ -1,3 +1,4 @@
+{% load tag %}
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
@@ -29,5 +30,8 @@
         {% block main %}
         {% endblock %}
       </div>
+  <div class="col-md-6 col-md-offset-4">
+            © {% date_tag %} <a href="https://www.heeeepin.com/">我的小小小小博客</a> . 由 Django 强力驱动.
+        </div>
   </body>
 </html>
