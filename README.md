@@ -5,20 +5,23 @@
 独立开发的基于Django的贴吧云回网站
 
 ## 如何使用
-
+### 项目安装
 ```shell
 git clone https://github.com/ghosx/TiebaProject.git
 cd TiebaProject
 pip3 install -r requirements.txt
-python3 manage.py crontab add
 python3 manage.py makemigrations
 python3 manage.py migrate
+python3 manage.py data
 ```
-连接数据库,在YunHui_data表中添加一条 id=1,success=0的纪录 (这一块目前需要手动实现,后期会改为自动操作)
+### 添加定时任务
+```shell
+python3 manage.py crontab add
 ```
-python3 manage.py runserver
+### 项目启动
+```shell
+python3 manage.py runserver 0.0.0.0:8000
 ```
-
 执行完上述命令后访问 [http://127.0.0.1:8000/](http://127.0.0.1:8000/) 即可
 
 ## 项目首页
