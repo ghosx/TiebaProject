@@ -2,8 +2,6 @@ import requests
 import re
 import hashlib
 import time
-import asyncio
-
 
 def get_tbs(bduss):
     # 获取tbs
@@ -311,7 +309,14 @@ def client_Sign(bduss, kw, fid, tbs):
 
 
 def check(bduss):
-    return get_name(bduss)
+    # 检查bduss是否失效
+    headers = {
+        'Host': 'tieba.baidu.com',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
+        'Cookie': 'BDUSS=' + bduss,
+    }
+    url = 'http://tieba.baidu.com/dc/common/tbs'
+    return requests.get(url=url,headers=headers).json()['is_login']
 
 if __name__ == '__main__':
     pass

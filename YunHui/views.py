@@ -7,6 +7,8 @@ from django.shortcuts import reverse
 import logging
 import requests
 import json
+import time
+import random
 
 # Create your views here.
 logging.basicConfig(filename='app.log', format='%(asctime)s %(filename)s[line:%(lineno)d] %(message)s',
@@ -187,3 +189,9 @@ def about(request):
 
 def robot(request):
     return render(request, 'robot.html')
+
+
+def random1(request,i):
+    # 测试学习协程
+    time.sleep(i/100)
+    return HttpResponse(i)

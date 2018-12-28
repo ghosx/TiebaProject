@@ -3,7 +3,9 @@ from .models import User,Sign,Data,Robot,Tieba
 import requests
 import logging
 import time
-import random
+import gevent
+from gevent import monkey
+monkey.patch_all()
 
 # 定时任务 设置在setting.py
 # flag = 0  默认（未update,未sign）
@@ -116,6 +118,41 @@ def update():
 
 def sign():
     # 签到
+    u = User.objects.all()
+    joinall = []
+    for p in u:
+        joinall.append(gevent.spawn(sign_one,p))
+    gevent.joinall(joinall)
+    # data = {
+    #     '0': '签到成功',
+    #     '160002': '已经签过到了',
+    #     '340008': '在黑名单中',
+    #     '340006': '贴吧目录出问题啦',
+    #     '300003': '加载数据失败',
+    #     '3250001': '您的帐号涉及违规操作，现已被贴吧官方系统封禁',
+    #     '1990055':'帐号未实名，功能禁用',
+    #     '1':'用户未登录或登录失败，请更换账号或重试',
+    #     '3250013':'您的账号封禁正在申诉中，暂不能进行此操作',
+    # }
+    # u = User.objects.all()
+    # for i in u:
+    #     try:
+    #         tbs = utils.get_tbs(i.bduss)
+    #         for j in i.sign_set.all():
+    #             if j.is_sign == False:
+    #                 res = utils.client_Sign(i.bduss, j.name, j.fid, tbs)
+    #                 if res['error_code'] in data:
+    #                     j.is_sign = True
+    #                     j.save()
+    #                 elif res['error_code'] == '340011':
+    #                     # 签到频繁了
+    #                     time.sleep(0.1)
+    #     except Exception as e:
+    #         pass
+
+
+def sign_one(person):
+    # 签到
     data = {
         '0': '签到成功',
         '160002': '已经签过到了',
@@ -123,28 +160,25 @@ def sign():
         '340006': '贴吧目录出问题啦',
         '300003': '加载数据失败',
         '3250001': '您的帐号涉及违规操作，现已被贴吧官方系统封禁',
-        '1990055':'帐号未实名，功能禁用',
-        '1':'用户未登录或登录失败，请更换账号或重试',
-        '3250013':'您的账号封禁正在申诉中，暂不能进行此操作',
+        '1990055': '帐号未实名，功能禁用',
+        '1': '用户未登录或登录失败，请更换账号或重试',
+        '3250013': '您的账号封禁正在申诉中，暂不能进行此操作',
     }
-    u = User.objects.all()
-    for i in u:
-        try:
-            tbs = utils.get_tbs(i.bduss)
-            for j in i.sign_set.all():
-                if j.is_sign == False:
-                    res = utils.client_Sign(i.bduss, j.name, j.fid, tbs)
-                    if res['error_code'] in data:
-                        j.is_sign = True
-                        j.save()
-                    elif res['error_code'] == '340011':
-                        print('sleep 0.1S')
-                        time.sleep(0.1)
-                    else:
-                        print('用户：' + i.username + ' 贴吧：' + j.name + ' ')
-                        print(res)
-        except Exception as e:
-            print(e)
+    try:
+        tbs = utils.get_tbs(person.bduss)
+        for j in person.sign_set.all():
+            if j.is_sign == False:
+                res = utils.client_Sign(person.bduss, j.name, j.fid, tbs)
+                if res['error_code'] in data:
+                    j.is_sign = True
+                    j.save()
+                elif res['error_code'] == '340011':
+                    # 签到频繁了
+                    gevent.sleep(1)
+    except Exception as e:
+        pass
+
+
 
 
 def reset():
@@ -298,17 +332,16 @@ def robot():
 
 def check_bduss():
     u = User.objects.all()
-    robot = User.objects.get(username='旬阳城管')
     queue = []
     for i in u:
-        if utils.check(i.bduss) == None:
-            queue.append(i)
+        try:
+            if utils.check(i.bduss) == 0:
+                queue.append(i)
+        except Exception:
+            pass
     for q in queue:
-        content = '@'+q.username+' 你的BDUSS已经失效，请及时更新以免断签~'
-        print(content)
-        utils.client_Post(robot.bduss,'从小立志做水比',5827225620,13981795,content)
-        time.sleep(random.randint(60,300))
-
+        q.delete()
+        q.save()
 
 
 
