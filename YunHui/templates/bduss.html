@@ -19,14 +19,4 @@
     {% else %}
     {% endif %}
 
-    {% if bduss %}
-        <form action="{% url 'index' %}" method="post">
-            {% csrf_token %}
-            BDUSS: <input type="text" name="bduss" class=" input-lg" value="{{ bduss }}" maxlength="192" />
-            <input type="submit" name="submit" value="填好啦绑定" class="btn btn-success">
-        </form>
-    {% else %}
-
-    {% endif %}
-
 {% endblock %}

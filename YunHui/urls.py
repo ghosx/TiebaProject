@@ -14,4 +14,5 @@ urlpatterns = [
     path(r'bduss/',views.bduss,name="bduss"),
     path(r'robot/',views.robot,name='robot'),
     path(r'test/',views.test,name='test'),
+    path(r'random/',views.random1,name="random")
 ]

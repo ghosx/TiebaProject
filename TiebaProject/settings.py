@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'yv#^ojr4v=0#!t%70&eijj^g)*^7)v^p(xl*td#aai3c6(h4e2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -75,23 +75,17 @@ WSGI_APPLICATION = 'TiebaProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'tieba',
-#         'USER': 'root',
-#         'PASSWORD': 'xxxxxx',
-#         'HOST': 'xxx.xxx.xxx.xxx',
-#         'PORT': '3306',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'Tieba',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tieba',
+        'USER': 'user',
+        'PASSWORD': 'password',
+        'HOST': '111.111.111.111',
+        'PORT': '3306',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -141,11 +135,11 @@ SESSION_COOKIE_AGE = 1800
 
 CRONJOBS = [
     ('*/1 * * * *', 'YunHui.cron.do','>> do.log'),
-    ('0 21 * * *', 'YunHui.cron.update','>> update.log'),
-    ('0 0 * * *', 'YunHui.cron.reset','>> reset.log'),
-    ('0 */2 * * *', 'YunHui.cron.sign','>> sign.log'),
-    ('*/5 * * * *', 'YunHui.cron.new_update','>> new_update.log'),
-    ('*/30 * * * *', 'YunHui.cron.new_sign','>> new_sign.log'),
-    ('*/2 * * * *', 'YunHui.cron.robot','>> robot.log'),
-    ('0 7 * * *', 'YunHui.cron.check_bduss','>> check_bduss.log'),
+    ('* */2 * * *', 'YunHui.cron.sign','>> sign.log'),
+    ('*/2 * * * *', 'YunHui.cron.newUpdate','>> newUpdate.log'),
+    ('*/5 * * * *', 'YunHui.cron.newSign','>> newSign.log'),
+    ('0 20 * * *', 'YunHui.cron.updata','>> updata.log'),
+    ('0 17 * * *', 'YunHui.cron.check_bduss','>> check_bduss.log'),
+    ('59 23 * * *', 'YunHui.cron.reset','>> reset.log'),
+    ('0 17 * * *', 'YunHui.cron.check_bduss','>> check_bduss.log')
 ]

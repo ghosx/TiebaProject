@@ -1,13 +1,17 @@
-# 贴吧云回 Beta 
+# 贴吧云签到云回复
 
 ## 项目简介
 
-独立开发的基于Django的贴吧云回网站
+独立开发的基于Django的贴吧云签到云回网站
+作者维护的地址：http://heeeepin.top/
 
 ## 如何使用
 ### 项目安装
 ```shell
 git clone https://github.com/ghosx/TiebaProject.git
+```
+修改`settings.py` 中的数据库配置
+```
 cd TiebaProject
 pip3 install -r requirements.txt
 python3 manage.py makemigrations

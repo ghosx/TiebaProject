@@ -70,6 +70,10 @@ def get_favorite(bduss):
     url = 'http://c.tieba.baidu.com/c/f/forum/like'
     res = requests.post(url=url,data=data,timeout=2).json()
     returnData = res
+    if 'forum_list' not in returnData:
+        returnData['forum_list'] = []
+    if res['forum_list'] == []:
+        return {'gconforum':[],'non-gconforum':[]}
     if 'non-gconforum' not in returnData['forum_list']:
         returnData['forum_list']['non-gconforum'] = []
     if 'gconforum' not in returnData['forum_list']:
@@ -319,4 +323,6 @@ def check(bduss):
     return requests.get(url=url,headers=headers).json()['is_login']
 
 if __name__ == '__main__':
-    pass
+    bduss = 'jItMml0YWN1SXB6V2RmbUVidEpCbHlqeXRybDQtNE1zYWJJY0gtVjN1ZXJnNWxiQVFBQUFBJCQAAAAAAAAAAAEAAAAYVT7ZsvG6vcjaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKv2cVur9nFbW'
+    a = get_favorite(bduss)
+    print(a)

@@ -26,28 +26,7 @@ def index(request):
         data['yunhui'] = Data.objects.get(id=1).success
         data['sign'] = Sign.objects.filter(is_sign=True).count()
         data['unsign'] = Sign.objects.filter(is_sign=False).count()
-        data['robot'] = Robot.objects.all().count()
-        return render(request, 'index.html',{'data':data})
-    elif request.method == "POST":
-        bduss = request.POST.get('bduss', None)
-        if bduss is not None:
-            if len(bduss) != 192:
-                return render(request,'index.html',{'msg':'BDUSS错误～'})
-            name = utils.get_name(bduss)
-            if name:
-                token = str(uuid.uuid1())
-                try:
-                    user = User.objects.get(username=name)
-                    user.bduss = bduss
-                except Exception:
-                    user = User(bduss=bduss,username=name, token=token)
-                finally:
-                    user.save()
-                    request.session['user'] = user.username
-                    request.session['token'] = user.token
-                    return redirect(reverse(info))
-            else:
-                return render(request, 'index.html', {'msg': 'BDUSS错误～'})
+        return render(request, 'index.html', {'data': data})
 
 
 def info(request):
@@ -181,17 +160,222 @@ def bduss(request):
             v)
         response = s.get(url3)
         bduss = response.cookies['BDUSS']
-        return render(request, 'bduss.html', {'bduss': bduss})
+        if bduss is not None:
+            if len(bduss) != 192:
+                return render(request, 'index.html', {'msg': 'BDUSS错误～'})
+            name = utils.get_name(bduss)
+            if name:
+                token = str(uuid.uuid1())
+                try:
+                    user = User.objects.get(username=name)
+                    user.bduss = bduss
+                except Exception:
+                    user = User(bduss=bduss, username=name, token=token)
+                finally:
+                    user.save()
+                    request.session['user'] = user.username
+                    request.session['token'] = user.token
+                    return render(request, 'success.html', {'username': user.username})
+            else:
+                return render(request, 'index.html', {'msg': 'BDUSS错误～'})
+        else:
+            return render(request, 'bduss.html', {'bduss': bduss})
 
 
 def about(request):
     return render(request, 'about.html')
 
+
 def robot(request):
     return render(request, 'robot.html')
 
 
-def random1(request,i):
-    # 测试学习协程
-    time.sleep(i/100)
-    return HttpResponse(i)
+def random1(request):
+    # t模拟随机延迟
+    t = random.randint(1, 2) / 10
+    time.sleep(t)
+    return HttpResponse(t)
+
+
+def newLogin(request):
+    a = {
+        "data": {
+            "PrjName": "西安理工大学蓝牙系统",
+            "TelPhone": 13888888888,
+            "alipay_user_id": "null",
+            "loginCode": "8888",
+            "AccMoney": 99999,
+            "GivenAccMoney": 99999,
+            "AccStatusID": 0,
+            "GroupID": 2,
+            "tags": "alLyrelease,84",
+            "agreement_no": "null",
+            "alias": "13888888888",
+            "AccID": 11049,
+            "PrjID": 84
+        },
+        "error_code": "0",
+        "message": "登录成功"
+    }
+    response = HttpResponse(json.dumps(a))
+    return response
+
+
+def accountInfo(request):
+    a = {
+        "data": {
+            "PrjName": "",
+            "TelPhone": 13888888888,
+            "AccMoney": 999999,
+            "GivenAccMoney": 999999,
+            "AccStatusID": 0,
+            "AccID": 11049,
+            "PrjID": 84,
+            "GroupID": 2
+        },
+        "error_code": "0",
+        "message": "获取账户信息成功"
+    }
+    return HttpResponse(json.dumps(a))
+
+
+def queryPushMsg(request):
+    a = {
+        "data": [],
+        "error_code": "0"
+    }
+    return HttpResponse(json.dumps(a))
+
+
+def versionCheck(request):
+    a = {
+        "error_code": "0",
+        "message": "当前已是最新版本",
+        "url": ""
+    }
+    return HttpResponse(json.dumps(a))
+
+
+def priinfo(request):
+    a = {
+        "data": {
+            "ServerTel": "4008828051",
+            "UserID": 34,
+            "PrjName": "",
+            "PrjYKMoney": 5.0000,
+            "IsUse": 1,
+            "WXPartnerKey": "",
+            "PrjDescript": "",
+            "WXAPPID": "",
+            "WXPartner": "",
+            "WXSevret": "",
+            "PrjID": 84
+        },
+        "error_code": "0"
+    }
+    return HttpResponse(json.dumps(a))
+
+
+def deviceInfo(request):
+    mac = request.GET.get("deviceMac_List")
+    a = {
+        "data": [
+            {
+                "DevName": "Just Do IT",
+                "QUName": "",
+                "FJName": "",
+                "PrjName": "",
+                "IsUse": 1,
+                "LCName": "",
+                "DevDescript": "",
+                "Dsbtypeid": 5,
+                "LDID": 230,
+                "LDName": "",
+                "DsbName": "",
+                "devMac": mac,
+                "LCID": 237,
+                "DevTypeName": "",
+                "DevTypeID": 51,
+                "QUID": 1,
+                "DevStatusID": 0,
+                "DevID": 31,
+                "PrjID": 84,
+                "FJID": 257
+            }
+        ],
+        "error_code": "0"
+    }
+    return HttpResponse(json.dumps(a))
+
+
+def downRate(request):
+    a = {
+        "LeadMoneyReal": 0,
+        "data": {
+            "Rate1": 40,
+            "MinMoney": 0,
+            "Rate3": 38,
+            "Rate2": 38,
+            "signature": "b6e9043f9c79436ef3d2bb15d38fad53",
+            "AutoDisConTime": 6,
+            "UseCount": 146,
+            "MinChargeUnit": 10,
+            "AccStatusID": 0,
+            "ParaTypeID": 1,
+            "PerMoney": 5000,
+            "ConsumeDT": "20181115234427",
+            "ChargeMethod": 17,
+            "DevStatusID": 0,
+            "MinTime": 0
+        },
+        "LeadMoneyGiven": 0,
+        "error_code": "0",
+        "message": "成功"
+    }
+    return HttpResponse(json.dumps(a))
+
+
+def savexf(request):
+    a = {
+        "UpLeadMoney": 99999,
+        "UpMoney": 0,
+        "FishTime": "2018-01-01 00:00:00",
+        "error_code": "0",
+        "PerMoney": 2000
+    }
+    return HttpResponse(json.dumps(a))
+
+
+def querySpread(request):
+    a = {
+        "data": [
+            {
+                "spreadPIC": "",
+                "spreadTitle": "性感学长，在线打水",
+                "spreadURL": "",
+                "createrDT": "",
+                "spreadContent": "↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑"
+            },
+            {
+                "spreadPIC": "",
+                "spreadTitle": "==重要==",
+                "spreadURL": "",
+                "createrDT": "",
+                "spreadContent": "请不要分享给他人，否则后果自负"
+            }
+        ],
+        "error_code": "0",
+        "message": "获取成功"
+    }
+    return HttpResponse(json.dumps(a))
+
+
+def infoSel(request):
+    a = {
+        "data": {
+            "AccMoney": 999900,
+            "PrjID": 84
+        },
+        "error_code": "0"
+    }
+    return HttpResponse(json.dumps(a))
