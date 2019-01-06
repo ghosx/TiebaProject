@@ -13,4 +13,8 @@ pytz==2018.5
 requests==2.19.1
 six==1.11.0
 urllib3==1.23
+<<<<<<< HEAD
 gevent=1.3.7
+=======
+gevent=1.3.7
+>>>>>>> 9592735aab1334c725ed45dddd401c3ab8a51460
