@@ -322,7 +322,51 @@ def check(bduss):
     url = 'http://tieba.baidu.com/dc/common/tbs'
     return requests.get(url=url,headers=headers).json()['is_login']
 
+def client_thread_add(bduss, kw, fid, content, title):
+    # 客户端发帖
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Cookie': 'ka=open',
+        'User-Agent': 'bdtb for Android 9.7.8.0',
+        'Connection': 'close',
+        'Accept-Encoding': 'gzip',
+        'Host': 'c.tieba.baidu.com',
+    }
+
+    data = {
+        'BDUSS': bduss,
+        '_client_type': '4',
+        '_client_id': 'wappc_1550210478950_661',
+        '_client_version': '9.7.8.0',
+        '_phone_imei': '000000000000000',
+        'anonymous': '1',
+        'call_from': '2',
+        'content': content,
+        'entrance_type': '1',
+        'fid': fid,
+        'is_ad': '0',
+        'kw': kw,
+        'model': 'MI+5',
+        'net_type': '1',
+        'new_vcode': '1',
+        'can_no_forum': '0',
+        'tbs': get_tbs(bduss),
+        'timestamp': str(int(time.time())),
+        'vcode_tag': '11',
+        'is_hide': '1',
+        'is_feedback': '0',
+        'reply_uid': 'null',
+        'is_ntitle': '0',
+        'title': title,
+        'subapp_type': 'mini',
+        'takephoto_num': '0',
+    }
+    data = encodeData(data)
+    url = 'http://c.tieba.baidu.com/c/c/thread/add'
+    a = requests.post(url=url, data=data, headers=headers, timeout=2).json()
+    return a
+
 if __name__ == '__main__':
-    bduss = 'jItMml0YWN1SXB6V2RmbUVidEpCbHlqeXRybDQtNE1zYWJJY0gtVjN1ZXJnNWxiQVFBQUFBJCQAAAAAAAAAAAEAAAAYVT7ZsvG6vcjaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKv2cVur9nFbW'
+    bduss = 'bduss....'
     a = get_favorite(bduss)
     print(a)
