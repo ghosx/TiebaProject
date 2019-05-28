@@ -11,6 +11,43 @@
         <ol>
             <h4><li>SECRET: <span style="color: red;font-size:110%;font-style: oblique">{{ request.session.token }} </span> 这是识别你身份的唯一凭证，凭此登录</li></h4>
         </ol>
+
+        <table table table-striped>
+            <thead>
+            <tr>
+                <th>
+                    用户名
+                </th>
+                <th>
+                    已绑定
+                </th>
+                <th>
+                    已签到
+                </th>
+                <th>
+                    未签到
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <span style="color: red;font-size:110%;font-style: oblique">{{ username }} </span>
+                </td>
+                <td>
+                    <span style="color: red;font-size:110%;font-style: oblique">{{ allbind }} </span>
+                </td>
+                <td>
+                    <span style="color: red;font-size:110%;font-style: oblique">{{ signed }} </span>
+                </td>
+                <td>
+                    <span style="color: red;font-size:110%;font-style: oblique">{{ unsigned }} </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
         {% if msg %}
             <p class="bg-danger">{{ msg }}</p>
         {% else %}

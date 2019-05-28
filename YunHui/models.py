@@ -13,12 +13,15 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
+    @property
     def 绑定贴吧(self):
         return self.sign_set.all().count()
 
+    @property
     def 已签到(self):
         return self.sign_set.all().filter(is_sign=1).count()
 
+    @property
     def 未签到(self):
         return self.sign_set.all().filter(is_sign=0).count()
 

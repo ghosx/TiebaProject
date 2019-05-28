@@ -35,7 +35,11 @@ def info(request):
         if token:
             u = User.objects.get(token=token)
             t = u.tieba_set.all()
-            return render(request, 'info.html', {'data': t})
+            allbind = u.绑定贴吧
+            signed = u.已签到
+            unsigned = u.未签到
+            return render(request, 'info.html', {'data': t, 'allbind': allbind, 'signed': signed, 'unsigned': unsigned,
+                                                 'username': u.username})
         else:
             return render(request, 'info.html')
     elif request.method == "POST":
@@ -177,7 +181,7 @@ def bduss(request):
                     request.session['token'] = user.token
                     return render(request, 'success.html', {'username': user.username})
             else:
-                return render(request, 'index.html', {'msg': 'BDUSS错误～'})
+                return render(request, 'index.html', {'msg': "BDUSS错误"})
         else:
             return render(request, 'bduss.html', {'bduss': bduss})
 
