@@ -27,6 +27,30 @@ def index(request):
         data['sign'] = Sign.objects.filter(is_sign=True).count()
         data['unsign'] = Sign.objects.filter(is_sign=False).count()
         return render(request, 'index.html', {'data': data})
+    elif request.method == "POST":
+        bduss = request.POST.get('bduss', None)
+        if bduss is not None:
+            if len(bduss) != 192:
+                return render(request, 'index.html', {'msg': 'BDUSS错误～'})
+            name = utils.get_name(bduss)
+            if name:
+                token = str(uuid.uuid1())
+                try:
+                    user = User.objects.get(username=name)
+                    user.idDel = False
+                    user.bduss = bduss
+                except Exception:
+                    user = User(bduss=bduss, username=name, token=token)
+                finally:
+                    user.save()
+                    request.session['user'] = user.username
+                    request.session['token'] = user.token
+                    return redirect(reverse(info))
+            else:
+                return redirect(reverse(info))
+        else:
+            return render(request, 'index.html', {'msg': 'BDUSS错误～'})
+
 
 
 def info(request):
