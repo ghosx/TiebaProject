@@ -34,6 +34,12 @@ python3 manage.py runserver 0.0.0.0:8000
 
 求 **Star** 求 **Follow**
 
+## 讨论群
+
+TG： https://t.me/tiebasign
+
+qq群： 818794879
+
 ## LICENSE
 
 [WTFPL – Do What the Fuck You Want to Public License](http://www.wtfpl.net/about/)
