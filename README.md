@@ -19,7 +19,7 @@ Windows暂不兼容（无法执行Cron）
 
 https://www.bilibili.com/video/av55931920/
 
-初始化数据库
+## 初始化数据库
 ```shell
 sudo service mysql start
 ```
@@ -36,7 +36,7 @@ mysql> flush privileges;
 ```shell
 mysql> CREATE DATABASE tieba;
 ```
-
+## 初始化
 克隆代码
 ```shell
 git clone https://github.com/ghosx/TiebaProject.git
