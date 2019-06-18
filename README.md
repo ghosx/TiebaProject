@@ -37,6 +37,7 @@ mysql> flush privileges;
 mysql> CREATE DATABASE tieba;
 ```
 
+克隆代码
 ```shell
 git clone https://github.com/ghosx/TiebaProject.git
 ```
