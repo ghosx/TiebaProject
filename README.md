@@ -20,6 +20,7 @@ Windows暂不兼容（无法执行Cron）
 https://www.bilibili.com/video/av55931920/
 
 ## 初始化数据库
+参考 https://www.centos.bz/2018/07/centoslinux-%E4%B8%8Bmysql8-0-11%E7%9A%84%E5%AE%89%E8%A3%85/
 ```shell
 sudo service mysql start
 ```
@@ -29,7 +30,8 @@ sudo systemctl enable mysql && sudo systemctl start mysql
 ```
 授予权限（本地安装用）
 ```shell
-mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;
+mysql -u root -p
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 mysql> flush privileges;
 ```
 创建tieba数据库
@@ -37,7 +39,7 @@ mysql> flush privileges;
 mysql> CREATE DATABASE tieba;
 ```
 ## 初始化
-克隆代码
+克隆代码（或手动下载）
 ```shell
 git clone https://github.com/ghosx/TiebaProject.git
 ```
