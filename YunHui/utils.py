@@ -23,7 +23,7 @@ def get_name(bduss):
     url = 'https://tieba.baidu.com/mo/q-'
     try:
         r = requests.get(url=url, headers=headers).text
-        name = re.search(r">([\u4e00-\u9fa5a-zA-Z0-9]+)的i贴吧<", r).group(1)
+        name = re.search(r">([\u4e00-\u9fa5a-zA-Z0-9_]+)的i贴吧<", r).group(1)
     except Exception:
         name = None
     finally:
@@ -367,6 +367,6 @@ def client_thread_add(bduss, kw, fid, content, title):
     return a
 
 if __name__ == '__main__':
-    bduss = 'bduss....'
-    a = get_favorite(bduss)
-    print(a)
+    bduss = 'Y0U0dvVXhyTng3eFhhTzZ1bTVQUEhPc29DajZsaWpZa0hwR35NckQ1SWpPelJkSVFBQUFBJCQAAAAAAAAAAAEAAAC~0QE4x-u90M7SssrJq18AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACOuDF0jrgxdbn'
+    name = get_name(bduss)
+    print(name)
