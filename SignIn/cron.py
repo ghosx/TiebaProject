@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 from TiebaProject.settings import *
 import gevent
 from gevent import monkey
@@ -16,6 +18,8 @@ USER = DATABASES['default']['USER']
 NAME = DATABASES['default']['NAME']
 
 db = pymysql.connect(HOST, USER, PASSWORD, NAME)
+
+connection = pymysql.connect(**config)
 db.autocommit(1)
 cursor = db.cursor()
 
@@ -26,81 +30,20 @@ update_queue = Queue()
 # 检查BDUSS
 check_queue = Queue()
 # 云回
-post_success_queue = Queue()
-post_fail_queue = Queue()
-post_data_queue = Queue()
 # 所有的tbs
 tbss = {}
 
-DATA = {
-    '0': '签到成功',
-    '160002': '已经签过到了',
-    '340008': '在黑名单中',
-    '340006': '贴吧目录出问题啦',
-    '300003': '加载数据失败',
-    '3250001': '您的帐号涉及违规操作，现已被贴吧官方系统封禁',
-    '1990055': '帐号未实名，功能禁用',
-    '1': '用户未登录或登录失败，请更换账号或重试',
-    '3250013': '您的账号封禁正在申诉中，暂不能进行此操作',
-}
+
 
 
 def getFliterUser(flag):
-    sql = "select * from YunHui_user where flag = %s" % flag
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    return results
-
-def getContent():
-    sql = "select * from YunHui_content WHERE id >= (SELECT floor(RAND() * (SELECT MAX(id) FROM `YunHui_content`)))  ORDER BY id LIMIT 1"
-    cursor.execute(sql)
-    results = cursor.fetchone()
-    return results[1]
-
-def getYunHuiTiezi():
-    sql = "select YunHui_tieba.id,bduss,fid,tid,name,isLou,floor,qid,time,success,stop,stop_times from YunHui_user,YunHui_tieba where YunHui_tieba.user_id = YunHui_user.id"
+    sql = "select * from signin_user where flag = %s" % flag
     cursor.execute(sql)
     results = cursor.fetchall()
     return results
 
 
-def getUsers():
-    sql = "select * from YunHui_user"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    return results
 
-
-def getTiebas(userid):
-    sql = "select * from YunHui_sign where user_id = {} and is_sign = 0".format(userid)
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    return results
-
-
-def getTBS(bduss):
-    headers = {
-        'Host': 'tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
-        'Cookie': 'BDUSS=' + bduss,
-    }
-    url = 'http://tieba.baidu.com/dc/common/tbs'
-    try:
-        res = requests.get(url=url, headers=headers, timeout=2).json()['tbs']
-        return res
-    except Exception:
-        return None
-
-
-def encodeData(data):
-    SIGN_KEY = 'tiebaclient!!!'
-    s = ''
-    keys = data.keys()
-    for i in sorted(keys):
-        s += i + '=' + str(data[i])
-    sign = hashlib.md5((s + SIGN_KEY).encode('utf-8')).hexdigest().upper()
-    data.update({'sign': str(sign)})
-    return data
 
 
 def check_bduss_one(userid, bduss):
@@ -118,108 +61,6 @@ def check_bduss_one(userid, bduss):
     except Exception:
         pass
 
-
-def add_tbs_to_tbss(userid, bduss):
-    global tbss
-    tbs = getTBS(bduss)
-    tbss[userid] = tbs
-
-def get_all_tbs():
-    global tbss
-    pool = Pool(20)
-    users = getUsers()
-    for user in users:
-        userid = user[0]
-        bduss = user[1]
-        pool.add(gevent.spawn(add_tbs_to_tbss, userid, bduss))
-    pool.join()
-    print('all tbs end')
-
-def client_LZL(Tieziid,bduss, kw, fid, content, quote_id, tid):
-    # 客户端楼中楼
-    tbs = getTBS(bduss)
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': 'ka=open',
-        'User-Agent': 'bdtb for Android 9.7.8.0',
-        'Connection': 'close',
-        'Accept-Encoding': 'gzip',
-        'Host': 'c.tieba.baidu.com',
-    }
-
-    data = {
-            'BDUSS':bduss,
-            '_client_type':'2',
-            '_client_id':'wappc_1534235498291_488',
-            '_client_version':'9.7.8.0',
-            '_phone_imei':'000000000000000',
-            'anonymous':'1',
-            'content':content,
-            'fid':fid,
-            'kw':kw,
-            'model':'MI+5',
-            'net_type':'1',
-            'new_vcode':'1',
-            'post_from':'3',
-            'quote_id':quote_id,
-            'tbs':tbs,
-            'tid':tid,
-            'timestamp':str(int(time.time())),
-            'vcode_tag':'12',
-        }
-    data = encodeData(data)
-    url = 'http://c.tieba.baidu.com/c/c/post/add'
-    try:
-        res = requests.post(url=url, data=data, headers=headers, timeout=2).json()
-        if res['error_code'] == '0':
-            post_success_queue.put((Tieziid))
-            post_data_queue.put((1))
-        else:
-            post_fail_queue.put((Tieziid))
-    except Exception as e:
-        print(e)
-
-def client_Post(Tieziid,bduss, kw, tid, fid, content):
-    # 客户端回帖模式
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': 'ka=open',
-        'User-Agent': 'bdtb for Android 9.7.8.0',
-        'Connection': 'close',
-        'Accept-Encoding': 'gzip',
-        'Host': 'c.tieba.baidu.com',
-    }
-
-    data = {
-        'BDUSS':bduss,
-        '_client_type':'2',
-        '_client_version':'9.7.8.0',
-        '_phone_imei':'000000000000000',
-        'anonymous':'1',
-        'content':content,
-        'fid':fid,
-        'from':'1008621x',
-        'is_ad':'0',
-        'kw':kw,
-        'model':'MI+5',
-        'net_type':'1',
-        'new_vcode':'1',
-        'tbs':getTBS(bduss),
-        'tid':tid,
-        'timestamp':str(int(time.time())),
-        'vcode_tag':'11',
-    }
-    data = encodeData(data)
-    url = 'http://c.tieba.baidu.com/c/c/post/add'
-    try:
-        res = requests.post(url=url, data=data, headers=headers, timeout=2).json()
-        if res['error_code'] == '0':
-            post_success_queue.put((Tieziid))
-            post_data_queue.put((1))
-        else:
-            post_fail_queue.put((Tieziid))
-    except Exception as e:
-        print(e)
 
 def sign_one(userid, bduss, kw, fid, tbs):
     # 客户端签到
@@ -363,7 +204,7 @@ def do():
 
 def newUpdate():
     sql = r"INSERT INTO YunHui_sign (`fid`,`name`,`level_id`,`cur_score`,`is_sign`,`user_id`) SELECT * from (select %s,%s, %s, %s,0,%s) as tmp WHERE NOT exists (select fid,user_id from YunHui_sign where fid = %s and user_id = %s) LIMIT 1"
-    sql2 = r"update YunHui_user set flag = 1 where id = %s"
+    sql2 = r"update signin_user set flag = 1 where id = %s"
     db.autocommit(True)
     pool = Pool(20)
     userlist = Queue()
@@ -387,7 +228,7 @@ def newSign():
     pool = Pool(20)
     userlist = Queue()
     sql = r"update YunHui_sign set `is_sign` = 1 where user_id = %s and fid = %s"
-    sql2 = r"update YunHui_user set flag = 2 where id = %s"
+    sql2 = r"update signin_user set flag = 2 where id = %s"
     users = getFliterUser(1)
     for user in users:
         bduss = user[1]
@@ -453,7 +294,7 @@ def check_bduss():
     # 检查bduss是否失效
     pool = Pool(20)
     users = getUsers()
-    sql1 = "delete from YunHui_user where id = %s"
+    sql1 = "delete from signin_user where id = %s"
     sql2 = "delete from YunHui_sign where user_id = %s"
     sql3 = "delete from YunHui_tieba where user_id = %s"
     for user in users:

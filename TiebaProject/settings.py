@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'YunHui',
+    'SignIn',
     'django_crontab',
 ]
 
@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'TiebaProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tieba',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': '111.111.111.111',
+        'NAME': 'tiebaproject',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
@@ -134,12 +134,12 @@ SESSION_COOKIE_AGE = 1800
 # CRONTAB
 
 CRONJOBS = [
-    ('*/1 * * * *', 'YunHui.cron.do','>> do.log'),
-    ('* */2 * * *', 'YunHui.cron.sign','>> sign.log'),
-    ('*/2 * * * *', 'YunHui.cron.newUpdate','>> newUpdate.log'),
-    ('*/5 * * * *', 'YunHui.cron.newSign','>> newSign.log'),
-    ('0 20 * * *', 'YunHui.cron.updata','>> updata.log'),
-    ('0 17 * * *', 'YunHui.cron.check_bduss','>> check_bduss.log'),
-    ('59 23 * * *', 'YunHui.cron.reset','>> reset.log'),
-    ('0 17 * * *', 'YunHui.cron.check_bduss','>> check_bduss.log')
+    ('*/1 * * * *', 'SignIn.cron.do', '>> do.log'),
+    ('* */2 * * *', 'SignIn.cron.sign', '>> sign.log'),
+    ('*/2 * * * *', 'SignIn.cron.newUpdate', '>> newUpdate.log'),
+    ('*/5 * * * *', 'SignIn.cron.newSign', '>> newSign.log'),
+    ('0 20 * * *', 'SignIn.cron.updata', '>> updata.log'),
+    ('0 17 * * *', 'SignIn.cron.check_bduss', '>> check_bduss.log'),
+    ('59 23 * * *', 'SignIn.cron.reset', '>> reset.log'),
+    ('0 17 * * *', 'SignIn.cron.check_bduss', '>> check_bduss.log')
 ]
