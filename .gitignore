@@ -1,4 +1,5 @@
 venv/
 TiebaProject/__pycache__/*
-YunHui/__pycache__/
+SignIn/__pycache__/
 db.sqlite3
+.github/

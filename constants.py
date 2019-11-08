@@ -17,11 +17,11 @@ API_STATUS = {
 # SQL
 ## USER
 
-GET_USER = "select * from signin_user where flag = {} order by id ASC".format(flag)
-GET_ALL_USER = "select * from signin_user order by id ASC"
+SQL_GET_USER = "select id,bduss,username,token,flag from signin_user where flag = {} order by id ASC"
+SQL_GET_ALL_USER = "select id,bduss,username,token,flag from signin_user order by id ASC"
 
 ### Tieba
-GET_ALL_TIEBA = "select * from signin_sign where user_id = {} and is_sign = 0 order by id ASC".format(userid)
+GET_ALL_TIEBA = "select * from signin_sign where user_id = {} and is_sign = 0 order by id ASC"
 
 # CLIENT_PARAMETER
 SIMPLE_PARA = {
@@ -42,7 +42,7 @@ LIKIE_URL = "http://c.tieba.baidu.com/c/f/forum/like"
 TBS_URL = "http://tieba.baidu.com/dc/common/tbs"
 SIGN_URL = "http://c.tieba.baidu.com/c/c/forum/sign"
 GET_USERNAME_URL = "https://tieba.baidu.com/mo/q-"
-FID_URL = "http://tieba.baidu.com/f/commit/share/fnameShareApi?ie=utf-8&fname={}".format(fname)
+FID_URL = "http://tieba.baidu.com/f/commit/share/fnameShareApi?ie=utf-8&fname={}"
 
 # HEADERS
 
@@ -60,16 +60,11 @@ SIGN_HEADERS = {
     'Host': 'c.tieba.baidu.com',
 }
 SIGN_DATA = {
-    "BDUSS": bduss,
     '_client_type': '2',
     '_client_version': '9.7.8.0',
     '_phone_imei': '000000000000000',
-    "fid": fid,
-    'kw': kw,
     'model': 'MI+5',
     "net_type": "1",
-    'tbs': tbs,
-    'timestamp': str(int(time.time())),
 }
 
 # VARIABLE NAME
@@ -82,8 +77,8 @@ ID = "id"
 NAME = "name"
 COOKIE = "Cookie"
 BDUSS = "BDUSS"
-EQUAL = "="
-EMPTY_STR = r'""'
+EQUAL = r'='
+EMPTY_STR = r''
 TBS = 'tbs'
 PAGE_NO = 'page_no'
 ONE = '1'
@@ -93,6 +88,8 @@ FID = 'fid'
 SIGN_KEY = 'tiebaclient!!!'
 UTF8 = "utf-8"
 SIGN = "SIGN"
+KW = "kw"
+IS_LOGIN = "is_login"
 
 # DATABASE
 
@@ -112,4 +109,4 @@ PYMYSQL_CONFIG = {
 }
 
 # REGEX
-USERNAME_REGEX = r'>([\u4e00-\u9fa5a-zA-Z0-9_]+)的i贴吧<'
+USERNAME_REGEX = ">([\u4e00-\u9fa5a-zA-Z0-9_]+)的i贴吧<"

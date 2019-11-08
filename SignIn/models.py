@@ -37,6 +37,7 @@ class Sign(models.Model):
     name = models.CharField(max_length=100, verbose_name="贴吧名")
     fid = models.CharField(max_length=20, verbose_name="贴吧id")
     is_sign = models.BooleanField(default=False, verbose_name="是否签到")
+    ststus = models.CharField(max_length=100, verbose_name="签到状态")
     user = models.ForeignKey(User,on_delete=models.CASCADE, verbose_name="所属用户")
 
     def __str__(self):

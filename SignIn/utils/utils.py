@@ -9,12 +9,16 @@ from constants import *
 
 
 def get_tbs(bduss):
-    headers = HEADERS.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
-    return requests.get(url=TBS_URL, headers=headers).json()[TBS]
+    headers = copy.copy(HEADERS)
+    headers.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
+    tbs = requests.get(url=TBS_URL, headers=headers, timeout=2).json()[TBS]
+    return tbs
+
 
 def get_name(bduss):
     # 网页版获取贴吧用户名
-    headers = HEADERS.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
+    headers = copy.copy(HEADERS)
+    headers.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
     try:
         r = requests.get(url=GET_USERNAME_URL, headers=headers).text
         name = re.search(USERNAME_REGEX, r).group(1)
@@ -22,11 +26,12 @@ def get_name(bduss):
     except Exception:
         return None
 
+
 def get_favorite(bduss):
     # 客户端关注的贴吧
     i = 1
     data = copy.copy(SIMPLE_PARA)
-    data = data.update({BDUSS: bduss, PAGE_NO: ONE, TIMESTAMP: str(int(time.time())), })
+    data.update({BDUSS: bduss, PAGE_NO: ONE, TIMESTAMP: str(int(time.time())), })
     data = encodeData(data)
     res = requests.post(url=LIKIE_URL, data=data, timeout=2).json()
     return_data = res
@@ -66,35 +71,23 @@ def encodeData(data):
     return data
 
 
-def client_Sign(bduss, kw, fid, tbs):
+def client_sign(bduss, kw, fid, tbs):
     # 客户端签到
-
-    data = {
-        "BDUSS": bduss,
-        '_client_type': '2',
-        '_client_version': '9.7.8.0',
-        '_phone_imei': '000000000000000',
-        "fid": fid,
-        'kw': kw,
-        'model': 'MI+5',
-        "net_type": "1",
-        'tbs': tbs,
-        'timestamp': str(int(time.time())),
-    }
+    data = copy.copy(SIGN_DATA)
+    data.update({BDUSS: bduss, FID: fid, KW: kw, TBS: tbs, TIMESTAMP: str(int(time.time()))})
     data = encodeData(data)
-    res = requests.post(url=SIGN_URL, data=data, timeout=1).json()
-    return res
+    try:
+        res = requests.post(url=SIGN_URL, data=data, timeout=1).json()
+        return res
+    except Exception:
+        return None
 
 
 def check(bduss):
     # 检查bduss是否失效
-    headers = {
-        'Host': 'tieba.baidu.com',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
-        'Cookie': 'BDUSS=' + bduss,
-    }
-    url = 'http://tieba.baidu.com/dc/common/tbs'
-    return requests.get(url=url, headers=headers).json()['is_login']
+    headers = copy.copy(HEADERS)
+    headers.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
+    return requests.get(url=TBS_URL, headers=headers).json()[IS_LOGIN]
 
 
 if __name__ == '__main__':

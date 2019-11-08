@@ -1,15 +1,16 @@
 # -*- coding:utf-8 -*-
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
-from . import utils
 import uuid
-from .models import User, Sign
+from SignIn.models import User, Sign
 from django.shortcuts import reverse
 import logging
 import requests
 import json
 import time
 import random
+
+from SignIn.utils import utils
 
 # Create your views here.
 logging.basicConfig(filename='app.log', format='%(asctime)s %(filename)s[line:%(lineno)d] %(message)s',
@@ -56,10 +57,10 @@ def info(request):
             return render(request, 'info.html')
         user = User.objects.get(token=token)
         allbind = user.all_bind
-        signed = u.signed
-        unsigned = u.unsigned
+        signed = user.signed
+        unsigned = user.unsigned
         return render(request, 'info.html',
-                      {'allbind': allbind, 'signed': signed, 'unsigned': unsigned, 'username': u.username})
+                      {'allbind': allbind, 'signed': signed, 'unsigned': unsigned, 'username': user.username})
     else:
         return redirect('/')
 
@@ -119,9 +120,12 @@ def bduss(request):
         bduss = response.cookies['BDUSS']
         if bduss is None:
             return render(request, 'bduss.html', {'bduss': bduss})
+        print(len(bduss))
+        print(bduss)
         if len(bduss) != 192:
             return render(request, 'index.html', {'msg': 'BDUSS错误～'})
         name = utils.get_name(bduss)
+        print(name)
         if not name:
             return render(request, 'index.html', {'msg': "BDUSS错误"})
         token = str(uuid.uuid1())
