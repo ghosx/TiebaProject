@@ -3,3 +3,4 @@ TiebaProject/__pycache__/*
 SignIn/__pycache__/
 db.sqlite3
 .github/
+*.pyc
