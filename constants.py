@@ -43,8 +43,17 @@ TBS_URL = "http://tieba.baidu.com/dc/common/tbs"
 SIGN_URL = "http://c.tieba.baidu.com/c/c/forum/sign"
 GET_USERNAME_URL = "https://tieba.baidu.com/mo/q-"
 FID_URL = "http://tieba.baidu.com/f/commit/share/fnameShareApi?ie=utf-8&fname={}"
+QRCODE_URL = "https://passport.baidu.com/v2/api/getqrcode?lp=pc&apiver=v3&tpl=netdisk"
+PASSPORT_URL = "https://passport.baidu.com/channel/unicast?channel_id={}&callback=&tpl=netdisk&apiver=v3"
+LOGIN_URL = 'https://passport.baidu.com/v3/login/main/qrbdusslogin?bduss={}&u=https%253A%252F%252Fpan.baidu.com%252Fdisk%252Fhome&loginVersion=v4&qrcode=1&tpl=netdisk&apiver=v3&traceid=&callback=%27'
 
 # HEADERS
+QR_CODE_HEADER = {
+    'Connection': 'keep-alive',
+    'Host': 'passport.baidu.com',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+}
+
 
 HEADERS = {
     'Host': 'tieba.baidu.com',
@@ -77,6 +86,7 @@ ID = "id"
 NAME = "name"
 COOKIE = "Cookie"
 BDUSS = "BDUSS"
+CHANNEL_V = "channel_v"
 EQUAL = r'='
 EMPTY_STR = r''
 TBS = 'tbs'
@@ -87,7 +97,7 @@ DATA = 'data'
 FID = 'fid'
 SIGN_KEY = 'tiebaclient!!!'
 UTF8 = "utf-8"
-SIGN = "SIGN"
+SIGN = "sign"
 KW = "kw"
 IS_LOGIN = "is_login"
 

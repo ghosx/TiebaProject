@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'SignIn',
-    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -124,22 +123,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATIC_ROOT = os.path.join(BASE_DIR, "SignIn/static/")
 
 
 # SESSION
 
 SESSION_COOKIE_AGE = 1800
 
-# CRONTAB
 
-CRONJOBS = [
-    ('*/1 * * * *', 'SignIn.cron.do', '>> do.log'),
-    ('* */2 * * *', 'SignIn.cron.sign', '>> sign.log'),
-    ('*/2 * * * *', 'SignIn.cron.newUpdate', '>> newUpdate.log'),
-    ('*/5 * * * *', 'SignIn.cron.newSign', '>> newSign.log'),
-    ('0 20 * * *', 'SignIn.cron.updata', '>> updata.log'),
-    ('0 17 * * *', 'SignIn.cron.check_bduss', '>> check_bduss.log'),
-    ('59 23 * * *', 'SignIn.cron.reset', '>> reset.log'),
-    ('0 17 * * *', 'SignIn.cron.check_bduss', '>> check_bduss.log')
-]

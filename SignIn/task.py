@@ -1,32 +1,59 @@
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-import requests
-import pymysql
-import time
-from SignIn.entity.user import User
-from SignIn.entity.tieba import Tieba
+import os
 
-from constants import PYMYSQL_CONFIG, SQL_GET_ALL_USER
+if not os.environ.get('DJANGO_SETTINGS_MODULE'):
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TiebaProject.settings')
+import django
+
+django.setup()
+
+from concurrent.futures import ThreadPoolExecutor
+from queue import Queue
+import time
+
+from SignIn.models import User, Sign
 
 
 def main():
-    db = pymysql.connect(**PYMYSQL_CONFIG)
-    db.autocommit(1)
+    like = Queue()  # 更新关注队列
+    sign = Queue()  # 签到队列
+    thread_pool = ThreadPoolExecutor(max_workers=5)  # 初始化线程池数量
 
-    with db.cursor() as cur:
-        cur.execute(SQL_GET_ALL_USER)
-        users = cur.fetchall()
-    user_objs = [User(*user) for user in users]
+    while True:
 
-    pool = ProcessPoolExecutor(10)
+        person_like = User.objects.need_update_like()
+        for person in person_like:
+            like.put(person)
+            print(time.time(), "like queue put:", person)
+        # 修改标记位，标记已经开始更新关注的贴吧
+        User.objects.set_status_liking()
 
-    for user_obj in user_objs:
-        pass
+        signs = Sign.objects.need_sign()
+        for s in signs:
+            sign.put(s)
+            print(time.time(), "sign queue put:", s)
+        # 修改状态位 标记全部开始签到
+        Sign.objects.set_status_signing()
 
+        ################################################################
 
+        while not like.empty():
+            person = like.get()
+            print(time.time(), "like queue get:", person)
+            if isinstance(person, User):
+                thread_pool.submit(person.like).add_done_callback(person.like_callback)
+        else:
+            print(time.time(), "empty like queue")
 
+        while not sign.empty():
+            s = sign.get()
+            print(time.time(), "sign queue get:", s)
+            if isinstance(s, Sign):
+                thread_pool.submit(s.sign).add_done_callback(s.sign_callback)
+        else:
+            print(time.time(), "empty sign queue")
 
+        time.sleep(5)
 
 
 if __name__ == '__main__':
-    t1 = time.time()
     main()
