@@ -44,20 +44,20 @@ def main():
         # 修改标记位，标记已经开始更新关注的贴吧
         User.objects.set_status_liking()
 
+        while not like.empty():
+            person = like.get()
+            print(time.time(), "like queue get:", person)
+            if isinstance(person, User):
+                thread_pool.submit(person.like).add_done_callback(person.like_callback)
+        # 上面是获取关注贴吧
+        ################################################################
+        # 下面是对贴吧进行签到
         signs = Sign.objects.need_sign()
         for s in signs:
             sign.put(s)
             print(time.time(), "sign queue put:", s)
         # 修改状态位 标记全部开始签到
         Sign.objects.set_status_signing()
-
-        ################################################################
-
-        while not like.empty():
-            person = like.get()
-            print(time.time(), "like queue get:", person)
-            if isinstance(person, User):
-                thread_pool.submit(person.like).add_done_callback(person.like_callback)
 
         while not sign.empty():
             s = sign.get()

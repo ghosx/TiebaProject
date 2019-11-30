@@ -3,6 +3,7 @@ import time
 import uuid
 
 from django.db import models
+from django.db.models import Q
 
 from SignIn.utils import utils
 from constants import MAX_RETRY_TIMES, NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER
@@ -89,7 +90,8 @@ class SignManager(models.Manager):
 
     @staticmethod
     def need_sign():
-        obj = Sign.objects.filter(is_sign=False, user__flag__exact=NOT_VALID_USER)
+        # 查找出未签到且用户为有效用户的贴吧
+        obj = Sign.objects.filter(is_sign=False).filter(~Q(user__flag=NOT_VALID_USER))
         return obj
 
     @staticmethod
