@@ -54,7 +54,6 @@ QR_CODE_HEADER = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
 }
 
-
 HEADERS = {
     'Host': 'tieba.baidu.com',
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
@@ -100,6 +99,15 @@ UTF8 = "utf-8"
 SIGN = "sign"
 KW = "kw"
 IS_LOGIN = "is_login"
+MAX_RETRY_TIMES = 3
+MAX_WORKER = 10
+TIME_SLEEP = 5
+
+# USER STATUS
+
+NEW_USER = 0
+ALREADY_UPDATE_USER = 1
+NOT_VALID_USER = 2
 
 # DATABASE
 

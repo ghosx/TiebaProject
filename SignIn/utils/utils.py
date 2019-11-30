@@ -8,6 +8,13 @@ import copy
 from constants import *
 
 
+def check_bduss(bduss):
+    headers = copy.copy(HEADERS)
+    headers.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
+    login = requests.get(url=TBS_URL, headers=headers, timeout=2).json()['is_login']
+    return login == 1
+
+
 def get_tbs(bduss):
     headers = copy.copy(HEADERS)
     headers.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
@@ -126,4 +133,6 @@ def client_sign(bduss, sign):
 
 
 if __name__ == '__main__':
-    pass
+    bduss = "16bU5qSnNOQWRSVUd6WldJOUhhZ3NVOXl4d1B3YW5Cc1RVV0ZXQTd-dH5XZ2xlRVFBQUFBJCQAAAAAAAAAAAEAAAC12ZM617fDzrXEt8XFo83eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH~N4V1~zeFdcH"
+    a = check_bduss(bduss)
+    print(a)

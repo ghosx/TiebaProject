@@ -5,22 +5,51 @@ import uuid
 from django.db import models
 
 from SignIn.utils import utils
+from constants import MAX_RETRY_TIMES, NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER
 
 
 class UserManager(models.Manager):
 
     def new(self, bduss):
         name = utils.get_name(bduss)
-        print(name)
         token = str(uuid.uuid1())
-        obj, created = User.objects.update_or_create(username=name, defaults={"bduss": bduss, "token": token})
+        obj, created = User.objects.update_or_create(username=name,
+                                                     defaults={"bduss": bduss, "token": token, "flag": NEW_USER})
         return created
 
-    def need_update_like(self):
-        return User.objects.filter(flag=0)
+    @staticmethod
+    def need_update_like():
+        """
+        返回需要更新关注贴吧的用户
+        :return:
+        """
+        return User.objects.filter(flag=NEW_USER)
 
-    def set_status_liking(self):
-        User.objects.filter(flag=0).update(flag=1)
+    @staticmethod
+    def re_update_like():
+        """
+        修改状态位，重新更新关注的贴吧
+        :return:
+        """
+        print(time.time(), "重置所有用户的贴吧关注状态")
+        User.objects.filter(flag=ALREADY_UPDATE_USER).update(flag=NEW_USER).save()
+
+    @staticmethod
+    def set_status_liking():
+        """
+        修改状态位，不需要更新关注的贴吧
+        :return:
+        """
+        User.objects.filter(flag=NEW_USER).update(flag=ALREADY_UPDATE_USER)
+
+    @staticmethod
+    def check_all_user_valid():
+        users = User.objects.all()
+        for user in users:
+            if not user.valid_user():
+                print(time.time(), user.username, '失效')
+                user.flag = NOT_VALID_USER
+                user.save()
 
 
 class User(models.Model):
@@ -28,7 +57,7 @@ class User(models.Model):
     username = models.CharField(max_length=30, unique=True, editable=False, verbose_name="贴吧用户名")
     token = models.CharField(max_length=200, unique=True, editable=False, verbose_name="个人TOKEN")
     created_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="提交时间")
-    flag = models.IntegerField(null=True, default=0, verbose_name="新用户")  # 默认0 已update1
+    flag = models.IntegerField(null=True, default=0, verbose_name="新用户")  # 默认0 已update1 bduss失效2
     objects = UserManager()
 
     def __str__(self):
@@ -45,6 +74,9 @@ class User(models.Model):
             Sign.objects.get_or_create(fid=i["id"], name=i["name"], user=self,
                                        defaults={"fid": i["id"], "name": i["name"], "user": self})
 
+    def valid_user(self):
+        return utils.check_bduss(self.bduss)
+
     class Meta:
         get_latest_by = "created_time"
         db_table = 'user'
@@ -55,9 +87,15 @@ class User(models.Model):
 
 class SignManager(models.Manager):
 
-    def need_sign(self):
-        obj = Sign.objects.filter(is_sign=False)
+    @staticmethod
+    def need_sign():
+        obj = Sign.objects.filter(is_sign=False, user__flag__exact=NOT_VALID_USER)
         return obj
+
+    @staticmethod
+    def reset_sign_status():
+        print(time.time(), "重置所有贴吧的签到状态")
+        Sign.objects.filter(is_sign=True).update(is_sign=False, retry_times=0, status="").save()
 
     def set_status_signing(self):
         Sign.objects.filter(is_sign=False).update(is_sign=True)
@@ -67,7 +105,7 @@ class Sign(models.Model):
     name = models.CharField(max_length=100, verbose_name="贴吧名")
     fid = models.CharField(max_length=20, verbose_name="贴吧id")
     is_sign = models.BooleanField(default=False, verbose_name="是否签到")
-    ststus = models.CharField(max_length=100, verbose_name="签到状态", default="")
+    status = models.CharField(max_length=100, verbose_name="签到状态", default="")
     retry_times = models.SmallIntegerField(verbose_name="重试次数", default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="所属用户")
     objects = SignManager()
@@ -86,15 +124,15 @@ class Sign(models.Model):
         sign = result["sign"]
         # 日志记录
         SignLog.objects.log(sign, res)
-        # 签到状态判断
-        if res['error_code'] != 0:
+        # 如果尝试签到3次还未成功，则不再尝试
+        if self.retry_times >= MAX_RETRY_TIMES or res['error_code'] == '0':
+            self.is_sign = True
+            self.status = "签到成功"
+        else:
+            # 签到状态判断
             self.is_sign = False
             self.retry_times += 1
-        # 如果尝试签到5次还未成功，则不再尝试
-        # todo: 修改最大尝试次数
-        if self.retry_times == 2:
-            self.is_sign = True
-        self.ststus = res['error_msg']
+            self.status = res['error_msg']
         self.save()
 
     class Meta:

@@ -1,13 +1,17 @@
 # -*- coding:utf-8 -*-
+import datetime
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
+from django.utils.datetime_safe import time
+
 from SignIn.models import User, Sign, SignLog
 import logging
 import requests
 import json
 
-from constants import QRCODE_URL, QR_CODE_HEADER, SIGN, PASSPORT_URL, LOGIN_URL, BDUSS, CHANNEL_V
+from constants import QRCODE_URL, QR_CODE_HEADER, SIGN, PASSPORT_URL, LOGIN_URL, BDUSS, CHANNEL_V, MAX_RETRY_TIMES
 
 logging.basicConfig(filename='app.log', format='%(asctime)s %(filename)s[line:%(lineno)d] %(message)s',
                     datefmt='%Y-%m-%d')
@@ -24,7 +28,6 @@ def get_img(request):
 
 def new(request):
     sign = request.GET.get(SIGN)
-    print(sign)
     url = PASSPORT_URL.format(sign)
     try:
         res = requests.get(url=url, headers=QR_CODE_HEADER, timeout=2)
@@ -50,6 +53,6 @@ def new(request):
 
 def status(request):
     user_count = User.objects.count()
-    today_sign = Sign.objects.count()
+    today_sign = Sign.objects.filter(is_sign=1, retry_times__gte=MAX_RETRY_TIMES).count()
     total_sign = SignLog.objects.count()
     return JsonResponse({"user_count": user_count, "today_sign": today_sign, "total_sign": total_sign})
