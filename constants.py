@@ -89,8 +89,13 @@ UTF8 = "utf-8"
 SIGN = "sign"
 KW = "kw"
 IS_LOGIN = "is_login"
-MAX_RETRY_TIMES = 3
+
+# 配日志信息
+## 尝试签到次数
+MAX_RETRY_TIMES = 2
+## 线程数
 MAX_WORKER = 10
+## 轮询时间单位秒
 TIME_SLEEP = 5
 
 # USER STATUS

@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-独立开发的基于Django的贴吧云签到云回网站
+独立开发的基于Django的贴吧云签到网站
 
 作者维护的地址：http://sign.heeeepin.com/
 
