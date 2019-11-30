@@ -1,5 +1,4 @@
 # -*- coding：utf8 -*-
-from TiebaProject.settings import DATABASES
 
 # API_STATUS
 API_STATUS = {
@@ -13,15 +12,6 @@ API_STATUS = {
     '1990055': '帐号未实名，功能禁用',
     '3250013': '您的账号封禁正在申诉中，暂不能进行此操作',
 }
-
-# SQL
-## USER
-
-SQL_GET_USER = "select id,bduss,username,token,flag from signin_user where flag = {} order by id ASC"
-SQL_GET_ALL_USER = "select id,bduss,username,token,flag from signin_user order by id ASC"
-
-### Tieba
-GET_ALL_TIEBA = "select * from signin_sign where user_id = {} and is_sign = 0 order by id ASC"
 
 # CLIENT_PARAMETER
 SIMPLE_PARA = {
@@ -108,23 +98,6 @@ TIME_SLEEP = 5
 NEW_USER = 0
 ALREADY_UPDATE_USER = 1
 NOT_VALID_USER = 2
-
-# DATABASE
-
-HOST = DATABASES['default']['HOST']
-PORT = DATABASES['default']['PORT']
-PASSWORD = DATABASES['default']['PASSWORD']
-USER = DATABASES['default']['USER']
-NAME = DATABASES['default']['NAME']
-
-PYMYSQL_CONFIG = {
-    'host': HOST,
-    'port': PORT,
-    'user': USER,
-    'password': PASSWORD,
-    'db': NAME,
-    'charset': 'utf8',
-}
 
 # REGEX
 USERNAME_REGEX = ">([\u4e00-\u9fa5a-zA-Z0-9_]+)的i贴吧<"
