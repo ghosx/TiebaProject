@@ -5,7 +5,7 @@ cd /root
 wget http://soft.vpser.net/lnmp/lnmp1.6.tar.gz -cO lnmp1.6.tar.gz && tar zxf lnmp1.6.tar.gz && cd lnmp1.6 && LNMP_Auto="y" DBSelect="3" DB_Root_Password="sign.heeeepin.com" InstallInnodb="y" PHPSelect="7" SelectMalloc="1" CheckMirror="n" ./install.sh lnmp
 cd /home/wwwroot
 wget https://github.com/ghosx/TiebaProject/archive/V2.0.tar.gz
-tar xvf V2.0.0.tar.gz
+tar xvf V2.0.tar.gz
 mv TiebaProject-2.0.0/ TiebaProject
 chmod 777 -R TiebaProject
 cd TiebaProject
