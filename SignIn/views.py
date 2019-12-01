@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import datetime
 
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
@@ -53,6 +54,6 @@ def new(request):
 
 def status(request):
     user_count = User.objects.count()
-    today_sign = Sign.objects.filter(is_sign=1, retry_times__gte=MAX_RETRY_TIMES).count()
+    today_sign = Sign.objects.filter(is_sign=1).filter(Q(status="最大尝试次数") | Q(status="签到成功")).count()
     total_sign = SignLog.objects.count()
     return JsonResponse({"user_count": user_count, "today_sign": today_sign, "total_sign": total_sign})

@@ -61,6 +61,18 @@ class User(models.Model):
     flag = models.IntegerField(null=True, default=0, verbose_name="新用户")  # 默认0 已update1 bduss失效2
     objects = UserManager()
 
+    @property
+    def all_bind(self):
+        return self.sign_set.count()
+
+    @property
+    def signed(self):
+        return self.sign_set.filter(is_sign=1).count()
+
+    @property
+    def unsigned(self):
+        return self.sign_set.filter(is_sign=0).count()
+
     def __str__(self):
         return self.username
 
@@ -127,7 +139,10 @@ class Sign(models.Model):
         # 日志记录
         SignLog.objects.log(sign, res)
         # 如果尝试签到3次还未成功，则不再尝试
-        if self.retry_times >= MAX_RETRY_TIMES or res['error_code'] == '0':
+        if self.retry_times >= MAX_RETRY_TIMES:
+            self.is_sign = True
+            self.status = "最大尝试次数"
+        elif str(res['error_code']) == '0':
             self.is_sign = True
             self.status = "签到成功"
         else:

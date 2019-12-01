@@ -1,8 +1,6 @@
 import os
 import sys
 
-from constants import MAX_WORKER, TIME_SLEEP
-
 parent_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_path)
 
@@ -12,13 +10,14 @@ import django
 
 django.setup()
 
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from queue import Queue
 import time
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from SignIn.models import User, Sign
+from constants import MAX_WORKER, TIME_SLEEP
 
 
 def main():
@@ -35,7 +34,7 @@ def main():
     # 后台任务 （签到和更新关注贴吧）
     like = Queue()  # 更新关注队列
     sign = Queue()  # 签到队列
-    thread_pool = ThreadPoolExecutor(max_workers=MAX_WORKER)  # 初始化线程池数量
+    thread_pool = ProcessPoolExecutor(max_workers=MAX_WORKER)  # 初始化线程池数量
     while True:
         person_like = User.objects.need_update_like()
         for person in person_like:
@@ -64,6 +63,7 @@ def main():
             print(time.time(), "sign queue get:", s)
             if isinstance(s, Sign):
                 thread_pool.submit(s.sign).add_done_callback(s.sign_callback)
+                thread_pool.shutdown()
 
         time.sleep(TIME_SLEEP)
 
