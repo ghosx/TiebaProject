@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Q
 
 from SignIn.utils import utils
-from constants import MAX_RETRY_TIMES, NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER
+from constants import MAX_RETRY_TIMES, NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER, API_STATUS
 
 
 class UserManager(models.Manager):
@@ -145,7 +145,7 @@ class Sign(models.Model):
         # 如果尝试签到3次还未成功，则不再尝试
         if self.retry_times >= MAX_RETRY_TIMES:
             self.status = "最大尝试次数"
-        elif str(res['error_code']) == '0':
+        elif str(res['error_code']) in API_STATUS:
             self.status = "签到成功"
         else:
             # 签到状态判断

@@ -1,5 +1,10 @@
 # -*- coding：utf8 -*-
 
+# API STATUS
+API_STATUS = {
+    '0': '签到成功',
+    '160002': '已经签过到了',
+}
 
 # CLIENT_PARAMETER
 SIMPLE_PARA = {
