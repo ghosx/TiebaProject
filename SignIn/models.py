@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Q
 
 from SignIn.utils import utils
-from constants import NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER, API_STATUS
+from constants import NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER, API_STATUS, MAX_RETRY_TIMES
 
 
 class UserManager(models.Manager):
@@ -123,6 +123,7 @@ class Sign(models.Model):
     name = models.CharField(max_length=100, verbose_name="贴吧名")
     fid = models.CharField(max_length=20, verbose_name="贴吧id")
     is_sign = models.BooleanField(default=False, verbose_name="是否签到")
+    retry_time = models.SmallIntegerField(default=0, verbose_name="重试次数")
     status = models.CharField(max_length=100, verbose_name="签到状态", default="")
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="所属用户")
     objects = SignManager()
@@ -146,7 +147,11 @@ class Sign(models.Model):
             self.is_sign = True
         else:
             print('签到出错', sign.name, res)
-            self.is_sign = False
+            self.retry_time += 1
+            if self.retry_time > MAX_RETRY_TIMES:
+                self.is_sign = True
+            else:
+                self.is_sign = False
         self.status = res['error_msg']
         self.save()
 
