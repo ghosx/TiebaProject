@@ -113,10 +113,10 @@ class SignManager(models.Manager):
     @staticmethod
     def reset_sign_status():
         print(time.time(), "重置所有贴吧的签到状态")
-        Sign.objects.filter(is_sign=True).update(is_sign=False, retry_times=0, status="").save()
+        Sign.objects.filter(is_sign=True).update(is_sign=False, retry_times=0, status="")
 
     def set_status_signing(self):
-        Sign.objects.filter(is_sign=False).update(is_sign=True).save()
+        Sign.objects.filter(is_sign=False).update(is_sign=True)
 
 
 class Sign(models.Model):
