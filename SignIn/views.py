@@ -54,6 +54,6 @@ def new(request):
 
 def status(request):
     user_count = User.objects.count()
-    today_sign = Sign.objects.filter(is_sign=1).filter(Q(status="最大尝试次数") | Q(status="签到成功")).count()
+    today_sign = Sign.objects.filter(is_sign=1).filter(~Q(status="")).count()
     total_sign = SignLog.objects.count()
     return JsonResponse({"user_count": user_count, "today_sign": today_sign, "total_sign": total_sign})
