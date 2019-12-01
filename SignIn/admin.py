@@ -3,7 +3,7 @@ from .models import User, Sign, SignLog
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'token', 'all_bind', 'signed', 'unsigned', 'created_time')
+    list_display = ('username', 'token', '共关注', '已签到', '未签到', '是否有效用户', 'created_time')
     search_fields = ('username',)
 
 

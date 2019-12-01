@@ -62,15 +62,19 @@ class User(models.Model):
     objects = UserManager()
 
     @property
-    def all_bind(self):
+    def 是否有效用户(self):
+        return self.flag != 2
+
+    @property
+    def 共关注(self):
         return self.sign_set.count()
 
     @property
-    def signed(self):
+    def 已签到(self):
         return self.sign_set.filter(is_sign=1).count()
 
     @property
-    def unsigned(self):
+    def 未签到(self):
         return self.sign_set.filter(is_sign=0).count()
 
     def __str__(self):
