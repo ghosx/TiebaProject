@@ -8,7 +8,7 @@
 
 ## 一键安装脚本 (debian9测试通过，理论上debain系列都可以)
 
-``wget https://github.com/ghosx/TiebaProject/blob/master/start.sh && chmod 777 ./start.sh && ./start.sh
+``wget https://raw.githubusercontent.com/ghosx/TiebaProject/master/start.sh && chmod 777 ./start.sh && ./start.sh
 ``
  
 ## 重构后(Vue)
