@@ -145,8 +145,10 @@ class Sign(models.Model):
         # 如果尝试签到3次还未成功，则不再尝试
         if self.retry_times >= MAX_RETRY_TIMES:
             self.status = "最大尝试次数"
+            self.is_sign = True
         elif str(res['error_code']) in API_STATUS:
             self.status = "签到成功"
+            self.is_sign = True
         else:
             # 签到状态判断
             self.is_sign = False
