@@ -63,7 +63,6 @@ def main():
             print(time.time(), "sign queue get:", s)
             if isinstance(s, Sign):
                 thread_pool.submit(s.sign).add_done_callback(s.sign_callback)
-                thread_pool.shutdown()
 
         time.sleep(TIME_SLEEP)
 

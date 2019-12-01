@@ -116,7 +116,7 @@ class SignManager(models.Manager):
         Sign.objects.filter(is_sign=True).update(is_sign=False, retry_times=0, status="").save()
 
     def set_status_signing(self):
-        Sign.objects.filter(is_sign=False).update(is_sign=True)
+        Sign.objects.filter(is_sign=False).update(is_sign=True).save()
 
 
 class Sign(models.Model):
@@ -144,10 +144,8 @@ class Sign(models.Model):
         SignLog.objects.log(sign, res)
         # 如果尝试签到3次还未成功，则不再尝试
         if self.retry_times >= MAX_RETRY_TIMES:
-            self.is_sign = True
             self.status = "最大尝试次数"
         elif str(res['error_code']) == '0':
-            self.is_sign = True
             self.status = "签到成功"
         else:
             # 签到状态判断
