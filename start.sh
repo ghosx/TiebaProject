@@ -6,7 +6,7 @@ wget http://soft.vpser.net/lnmp/lnmp1.6.tar.gz -cO lnmp1.6.tar.gz && tar zxf lnm
 cd /home/wwwroot
 wget https://github.com/ghosx/TiebaProject/archive/V2.0.tar.gz
 tar xvf V2.0.tar.gz
-mv TiebaProject-2.0.0/ TiebaProject
+mv TiebaProject-2.0/ TiebaProject
 chmod 777 -R TiebaProject
 cd TiebaProject
 mkdir logs
