@@ -8,7 +8,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class SignAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'fid', 'is_sign', 'status', 'retry_times', 'user')
+    list_display = ('id', 'name', 'fid', 'is_sign', 'status', 'user')
     search_fields = ('id', 'name', 'fid', 'status', 'user')
 
 

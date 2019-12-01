@@ -12,7 +12,7 @@ import logging
 import requests
 import json
 
-from constants import QRCODE_URL, QR_CODE_HEADER, SIGN, PASSPORT_URL, LOGIN_URL, BDUSS, CHANNEL_V, MAX_RETRY_TIMES
+from constants import QRCODE_URL, QR_CODE_HEADER, SIGN, PASSPORT_URL, LOGIN_URL, BDUSS, CHANNEL_V
 
 logging.basicConfig(filename='app.log', format='%(asctime)s %(filename)s[line:%(lineno)d] %(message)s',
                     datefmt='%Y-%m-%d')

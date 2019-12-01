@@ -10,7 +10,7 @@ import django
 
 django.setup()
 
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
 import time
 
@@ -34,12 +34,11 @@ def main():
     # 后台任务 （签到和更新关注贴吧）
     like = Queue()  # 更新关注队列
     sign = Queue()  # 签到队列
-    thread_pool = ProcessPoolExecutor(max_workers=MAX_WORKER)  # 初始化线程池数量
+    thread_pool = ThreadPoolExecutor(max_workers=MAX_WORKER)  # 初始化线程池数量
     while True:
         person_like = User.objects.need_update_like()
         for person in person_like:
             like.put(person)
-            print(time.time(), "like queue put:", person)
         # 修改标记位，标记已经开始更新关注的贴吧
         User.objects.set_status_liking()
 
@@ -54,13 +53,11 @@ def main():
         signs = Sign.objects.need_sign()
         for s in signs:
             sign.put(s)
-            print(time.time(), "sign queue put:", s)
         # 修改状态位 标记全部开始签到
         Sign.objects.set_status_signing()
 
         while not sign.empty():
             s = sign.get()
-            print(time.time(), "sign queue get:", s)
             if isinstance(s, Sign):
                 thread_pool.submit(s.sign).add_done_callback(s.sign_callback)
 

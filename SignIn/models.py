@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Q
 
 from SignIn.utils import utils
-from constants import MAX_RETRY_TIMES, NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER, API_STATUS
+from constants import NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER, API_STATUS
 
 
 class UserManager(models.Manager):
@@ -113,7 +113,7 @@ class SignManager(models.Manager):
     @staticmethod
     def reset_sign_status():
         print(time.time(), "重置所有贴吧的签到状态")
-        Sign.objects.filter(is_sign=True).update(is_sign=False, retry_times=0, status="")
+        Sign.objects.filter(is_sign=True).update(is_sign=False, status="")
 
     def set_status_signing(self):
         Sign.objects.filter(is_sign=False).update(is_sign=True)
@@ -124,7 +124,6 @@ class Sign(models.Model):
     fid = models.CharField(max_length=20, verbose_name="贴吧id")
     is_sign = models.BooleanField(default=False, verbose_name="是否签到")
     status = models.CharField(max_length=100, verbose_name="签到状态", default="")
-    retry_times = models.SmallIntegerField(verbose_name="重试次数", default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="所属用户")
     objects = SignManager()
 
@@ -143,17 +142,12 @@ class Sign(models.Model):
         # 日志记录
         SignLog.objects.log(sign, res)
         # 如果尝试签到3次还未成功，则不再尝试
-        if self.retry_times >= MAX_RETRY_TIMES:
-            self.status = "最大尝试次数"
-            self.is_sign = True
-        elif str(res['error_code']) in API_STATUS:
-            self.status = "签到成功"
+        if str(res['error_code']) in API_STATUS:
             self.is_sign = True
         else:
-            # 签到状态判断
+            print('签到出错', sign.name, res)
             self.is_sign = False
-            self.retry_times += 1
-            self.status = res['error_msg']
+        self.status = res['error_msg']
         self.save()
 
     class Meta:
@@ -182,4 +176,3 @@ class SignLog(models.Model):
         db_table = 'sign_log'
         verbose_name = '签到日志'
         verbose_name_plural = verbose_name
-
