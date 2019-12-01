@@ -136,8 +136,8 @@ class Sign(models.Model):
         res = utils.client_sign(bduss=self.user.bduss, sign=self)
         return {"res": res, 'sign': self}
 
-    def sign_callback(self, res):
-        result = res.result()
+    def sign_callback(self, obj):
+        result = obj.result()
         res = result["res"]
         sign = result["sign"]
         # 日志记录
@@ -180,3 +180,4 @@ class SignLog(models.Model):
         db_table = 'sign_log'
         verbose_name = '签到日志'
         verbose_name_plural = verbose_name
+
