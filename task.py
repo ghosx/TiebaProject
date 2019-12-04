@@ -25,10 +25,12 @@ def main():
     scheduler = BackgroundScheduler()
     # 每24小时更新一次关注的贴吧
     scheduler.add_job(User.objects.re_update_like, 'cron', hour='20')
-    # 每天0点0分重置贴吧的签到状态
-    scheduler.add_job(Sign.objects.reset_sign_status, 'cron', hour='0,22')
+    # 每天0点0分重置贴吧的签到状态，进行签到
+    scheduler.add_job(Sign.objects.reset_sign_status, 'cron', hour='0')
+     # 每天4点重置贴吧的签到状态，再次签到
+    scheduler.add_job(Sign.objects.reset_sign_status_again, 'cron', hour='4')
     # 检查用户的bduss是否失效
-    scheduler.add_job(User.objects.check_all_user_valid, 'cron', hour='16')
+    scheduler.add_job(User.objects.check_all_user_valid, 'cron', hour='18')
     scheduler.start()
     ############################################################################################
     # 后台任务 （签到和更新关注贴吧）
@@ -61,6 +63,7 @@ def main():
             if isinstance(s, Sign):
                 thread_pool.submit(s.sign).add_done_callback(s.sign_callback)
 
+        print(time.time(),"hahah")
         time.sleep(TIME_SLEEP)
 
 
