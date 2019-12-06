@@ -115,9 +115,14 @@ class SignManager(models.Manager):
         return obj
 
     @staticmethod
+    def reset_sign_status_again():
+        print(time.time(), "再次重置所有贴吧的签到状态")
+        Sign.objects.filter(is_sign=True,retry_time=MAX_RETRY_TIMES).filter(~Q(user__flag=NOT_VALID_USER)).update(is_sign=False, status="",retry_time=0)
+
+    @staticmethod
     def reset_sign_status():
         print(time.time(), "重置所有贴吧的签到状态")
-        Sign.objects.filter(is_sign=True).update(is_sign=False, status="")
+        Sign.objects.filter(is_sign=True).filter(~Q(user__flag=NOT_VALID_USER)).update(is_sign=False, status="",retry_time=0)
 
     def set_status_signing(self):
         Sign.objects.filter(is_sign=False).update(is_sign=True)
@@ -144,19 +149,28 @@ class Sign(models.Model):
         result = obj.result()
         res = result["res"]
         sign = result["sign"]
+        # 判断res是否为None,即签到过程中有没有发生异常
+        if not res:
+            self.is_sign = False
+            self.status = "签到过程中发生异常"
+            self.retry_time += 1
+            self.save()
+            return None
         # 日志记录
         SignLog.objects.log(sign, res)
         # 如果尝试签到3次还未成功，则不再尝试
-        if str(res['error_code']) in API_STATUS:
+        error_code = str(res.get('error_code',0))
+        if error_code in API_STATUS:
             self.is_sign = True
+            self.status = API_STATUS[error_code]
         else:
             print('签到出错', sign.name, res)
-            self.retry_time += 1
             if self.retry_time > MAX_RETRY_TIMES:
                 self.is_sign = True
             else:
                 self.is_sign = False
-        self.status = res['error_msg']
+                self.retry_time += 1
+            self.status = res.get('error_msg')
         self.save()
 
     class Meta:
