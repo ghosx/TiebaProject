@@ -71,7 +71,7 @@ class User(models.Model):
 
     @property
     def 已签到(self):
-        return self.sign_set.filter(is_sign=1).count()
+        return self.sign_set.filter(is_sign=1).exclude(status="").count()
 
     @property
     def 未签到(self):
