@@ -33,7 +33,7 @@ class UserManager(models.Manager):
         :return:
         """
         print(time.time(), "重置所有用户的贴吧关注状态")
-        User.objects.filter(flag=ALREADY_UPDATE_USER).update(flag=NEW_USER).save()
+        User.objects.filter(flag=ALREADY_UPDATE_USER).update(flag=NEW_USER)
 
     @staticmethod
     def set_status_liking():
@@ -86,10 +86,14 @@ class User(models.Model):
 
     def like_callback(self, res):
         res = res.result()
+        signs = []
         for i in res:
-            print(time.time(), "获取到新关注的贴吧:", i["name"])
-            Sign.objects.get_or_create(fid=i["id"], name=i["name"], user=self,
-                                       defaults={"fid": i["id"], "name": i["name"], "user": self})
+            try:
+                Sign.objects.get(fid=i["id"], name=i["name"], user=self)
+            except Sign.DoesNotExist:
+                print(time.time(), "获取到新关注的贴吧:", i["name"])
+                signs.append(Sign(fid=i["id"], name=i["name"], user=self))
+        Sign.objects.bulk_create(signs)
 
     def valid_user(self):
         return utils.check_bduss(self.bduss)

@@ -34,6 +34,37 @@ def get_name(bduss):
         return None
 
 
+def commitprison(url):
+    pass
+    # bduss = 'bduss'
+    # c = {
+    #     'BDUSS': bduss,
+    #     '_client_id': 'wappc_1550210478950_661',
+    #     '_client_type': '2',
+    #     '_client_version': '8.0.8.0',
+    #     '_phone_imei': '862860048010031',
+    #     'cuid': '9E57A049F120D997590D629E363B27D5|130010840068268',
+    #     'cuid_galaxy2': '9E57A049F120D997590D629E363B27D5|130010840068268',
+    #     'day': '1',
+    #     'fid': '13981795',
+    #     'from': '1014613p',
+    #     'model': 'MI 8 SE',
+    #     'net_type': '1',
+    #     'nick_name': '被砍滴菜刀',
+    #     'reason': '辱骂吧务，对吧务工作造成干扰，给予封禁处罚。',
+    #     'subapp_type': 'mini',
+    #     'tbs': get_tbs(bduss),
+    #     'timestamp': str(time.time()),
+    #     'un': '被砍滴菜刀',
+    #     'word': '从小立志做水比',
+    #     'z': '5257137397',
+    #     'z_id': '8482A996A655210A9E247FC636004D13B22088EE31D7C637825A7414DFE4E0'
+    # }
+    # data = encodeData(c)
+    # res = requests.post(url="http://c.tieba.baidu.com/c/c/bawu/commitprison", data=data, timeout=1).json()
+    # print(res)
+
+
 def get_favorite(bduss):
     # 客户端关注的贴吧
     returnData = {}
@@ -54,7 +85,10 @@ def get_favorite(bduss):
     }
     data = encodeData(data)
     url = 'http://c.tieba.baidu.com/c/f/forum/like'
-    res = requests.post(url=url, data=data, timeout=2).json()
+    try:
+        res = requests.post(url=url, data=data, timeout=5).json()
+    except Exception:
+        return []
     returnData = res
     if 'forum_list' not in returnData:
         returnData['forum_list'] = []
@@ -81,8 +115,13 @@ def get_favorite(bduss):
             'vcode_tag': '11',
         }
         data = encodeData(data)
-        url = 'http://c.tieba.baidu.com/c/f/forum/like'
-        res = requests.post(url=url, data=data, timeout=2).json()
+        try:
+            res = requests.post(url=url, data=data, timeout=5).json()
+            print(res)
+        except Exception:
+            continue
+        if 'forum_list' not in res:
+            continue
         if 'non-gconforum' in res['forum_list']:
             returnData['forum_list']['non-gconforum'].append(res['forum_list']['non-gconforum'])
         if 'gconforum' in res['forum_list']:
@@ -133,4 +172,18 @@ def client_sign(bduss, sign):
 
 
 if __name__ == '__main__':
-    pass
+    # class Sign():
+    #     fid = None
+    #     name = None
+    #     tbs = None
+    # bduss = 'nU0MTF3QkQ3eUhJWFFOdW1YM2oxfm1pcURaNGNtckh5Q2dLMEZZTVpnUVRTWjFiQVFBQUFBJCQAAAAAAAAAAAEAAAAT6smlxu~VssS3y7kxMgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABO8dVsTvHVbc'
+    # sign = Sign()
+    # sign.fid = '347672'
+    # sign.name = '汤普森'
+    # sign.tbs = get_tbs(bduss)
+    # res = client_sign(bduss,sign)
+    # print(res['error_msg'])
+    bduss = "jlrTXRaNnNiVHdzN0M4OGJ0T3NOZVkwZFlzTzMyVW1rZTg1U2FFakhpQkFGUkJlSVFBQUFBJCQAAAAAAAAAAAEAAAAr0~wxxarLwMKl1vcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAECI6F1AiOhdZ"
+    a = get_favorite(bduss)
+    print("#" * 50)
+    print(len(a))
