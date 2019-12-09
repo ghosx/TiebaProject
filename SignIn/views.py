@@ -3,9 +3,9 @@ import datetime
 
 from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.shortcuts import HttpResponse
-from django.utils.datetime_safe import time
+from django.core.cache import cache
 
 from SignIn.models import User, Sign, SignLog
 import logging
@@ -53,7 +53,16 @@ def new(request):
 
 
 def status(request):
-    user_count = User.objects.count()
-    today_sign = Sign.objects.filter(is_sign=1).filter(~Q(status="")).count()
-    total_sign = SignLog.objects.count()
+    if cache.has_key('user_count') and cache.has_key('today_sign') and cache.has_key('total_sign'):
+        user_count = cache.get('user_count')
+        today_sign = cache.get('today_sign')
+        total_sign = cache.get('total_sign')
+    else:
+        user_count = User.objects.count()
+        today_sign = Sign.objects.filter(is_sign=1).filter(~Q(status="")).count()
+        total_sign = SignLog.objects.count()
+
+        cache.set('user_count', user_count, 60 * 5)
+        cache.set('today_sign', today_sign, 60 * 5)
+        cache.set('total_sign', total_sign, 60 * 5)
     return JsonResponse({"user_count": user_count, "today_sign": today_sign, "total_sign": total_sign})

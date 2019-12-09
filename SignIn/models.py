@@ -75,7 +75,7 @@ class User(models.Model):
 
     @property
     def 未签到(self):
-        return self.sign_set.filter(is_sign=0).count()
+        return self.共关注 - self.已签到
 
     def __str__(self):
         return self.username

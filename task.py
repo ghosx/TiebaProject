@@ -63,7 +63,6 @@ def main():
             if isinstance(s, Sign):
                 thread_pool.submit(s.sign).add_done_callback(s.sign_callback)
 
-        print(time.time(),"hahah")
         time.sleep(TIME_SLEEP)
 
 

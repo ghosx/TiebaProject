@@ -85,6 +85,16 @@ DATABASES = {
     }
 }
 
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/6',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -128,6 +138,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # SESSION
 
-SESSION_COOKIE_AGE = 1800
-
-
+SESSION_COOKIE_AGE = 3600
