@@ -27,8 +27,21 @@ SIMPLE_PARA = {
     'vcode_tag': '11',
 }
 
+PRISON_DATA = {
+    'BDUSS': '%s',
+    'day': '%s',
+    'fid': '%s',
+    'ntn': 'banid',
+    'tbs': '%s',
+    'timestamp': '%s',
+    'un': '%s',
+    'word': '.',
+    'z': '1',
+}
+
 # API_URL
 
+COMMIT_PRISON = "http://c.tieba.baidu.com/c/c/bawu/commitprison"
 LIKIE_URL = "http://c.tieba.baidu.com/c/f/forum/like"
 TBS_URL = "http://tieba.baidu.com/dc/common/tbs"
 SIGN_URL = "http://c.tieba.baidu.com/c/c/forum/sign"
@@ -90,6 +103,8 @@ UTF8 = "utf-8"
 SIGN = "sign"
 KW = "kw"
 IS_LOGIN = "is_login"
+ZERO = '0'
+FIVE = 5
 
 # 配日志信息
 ## 尝试签到次数
