@@ -36,32 +36,37 @@ def main():
     # 后台任务 （签到和更新关注贴吧）
     like = Queue()  # 更新关注队列
     sign = Queue()  # 签到队列
-    thread_pool = ThreadPoolExecutor(max_workers=MAX_WORKER)  # 初始化线程池数量
+    like_thread_pool = ThreadPoolExecutor(max_workers=MAX_WORKER)  # 初始化线程池数量
+    sign_thread_pool = ThreadPoolExecutor(max_workers=MAX_WORKER)  # 初始化线程池数量
     while True:
         person_like = User.objects.need_update_like()
         for person in person_like:
             like.put(person)
-        # 修改标记位，标记已经开始更新关注的贴吧
-        User.objects.set_status_liking()
+        
+        if not like.empty():
+            # 修改标记位，标记已经开始更新关注的贴吧
+            User.objects.set_status_liking()
 
-        while not like.empty():
-            person = like.get()
-            print(time.time(), "like queue get:", person)
-            if isinstance(person, User):
-                thread_pool.submit(person.like).add_done_callback(person.like_callback)
+            while not like.empty():
+                person = like.get()
+                print(time.time(), "like queue get:", person)
+                if isinstance(person, User):
+                    like_thread_pool.submit(person.like).add_done_callback(person.like_callback)
         # 上面是获取关注贴吧
         ################################################################
         # 下面是对贴吧进行签到
         signs = Sign.objects.need_sign()
         for s in signs:
             sign.put(s)
-        # 修改状态位 标记全部开始签到
-        Sign.objects.set_status_signing()
+            
+        if not sign.empty():
+            # 修改状态位 标记全部开始签到
+            Sign.objects.set_status_signing()
 
-        while not sign.empty():
-            s = sign.get()
-            if isinstance(s, Sign):
-                thread_pool.submit(s.sign).add_done_callback(s.sign_callback)
+            while not sign.empty():
+                s = sign.get()
+                if isinstance(s, Sign):
+                    sign_thread_pool.submit(s.sign).add_done_callback(s.sign_callback)
 
         time.sleep(TIME_SLEEP)
 
