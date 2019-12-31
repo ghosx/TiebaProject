@@ -9,12 +9,12 @@ class UserAdmin(admin.ModelAdmin):
 
 class SignAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'fid', 'is_sign', 'retry_time', 'status', 'user')
-    search_fields = ('id', 'name', 'fid', 'status', 'user')
+    search_fields = ('id', 'name', 'fid', 'status', 'user__username')
 
 
 class SignLogAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'created_time', 'ret_log', 'user')
-    search_fields = ('id', 'name', 'user')
+    search_fields = ('id', 'name', 'user__username')
 
 
 admin.site.register(User, UserAdmin)
