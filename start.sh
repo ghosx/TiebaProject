@@ -5,8 +5,8 @@ cd /root
 wget http://soft.vpser.net/lnmp/lnmp1.6.tar.gz -cO lnmp1.6.tar.gz && tar zxf lnmp1.6.tar.gz && cd lnmp1.6 && LNMP_Auto="y" DBSelect="3" DB_Root_Password="sign.heeeepin.com" InstallInnodb="y" PHPSelect="7" SelectMalloc="1" CheckMirror="n" ./install.sh lnmp
 cd /home/wwwroot
 wget https://github.com/ghosx/TiebaProject/archive/V3.0.tar.gz
-tar xvf v3.0.tar.gz
-mv tiebaProject-3.0/ tiebaProject
+tar xvf V3.0.tar.gz
+mv TiebaProject-3.0/ tiebaProject
 chmod 777 -R tiebaProject
 cd tiebaProject
 mkdir logs
@@ -110,11 +110,19 @@ include vhost/*.conf;
 nginx -s reload
 service nginx restart
 cd /home/wwwroot/tiebaProject
-python3 manage.py createsuperuser --username admin --email admin@qq.com
-admin123456
-admin123456
-nohup python3 task.py &
 
+apt install expect -y
+
+expect -c "
+spawn python3 manage.py createsuperuser
+expect {
+    \"Username*\" {set timeout 300; send \"admin\r\";exp_continue;}
+    \"Email address*\" {send \"admin@qq.com\r\";exp_continue;}
+    \"Password*\" {send \"admin123456\r\";exp_continue;}
+    \"Password*\" {send \"admin123456\r\"; }
+      }"
+
+nohup python3 task.py &
 # 定时任务
 echo "# 每分钟判断一次进程是否异常退出，实现自动重启
 */1 * * * * /bin/bash /www/wwwroot/tiebaProject/restart.sh > /dev/null
