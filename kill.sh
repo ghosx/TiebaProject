@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #/bin/bash
 # author: ghosx
 # date: 2019/12/12

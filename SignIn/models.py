@@ -3,7 +3,6 @@ import time
 import uuid
 
 from django.db import models
-from django.db.models import Q
 
 from SignIn.utils import utils
 from constants import NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER, API_STATUS, MAX_RETRY_TIMES
@@ -111,18 +110,20 @@ class SignManager(models.Manager):
     @staticmethod
     def need_sign():
         # 查找出未签到且用户为有效用户的贴吧
-        obj = Sign.objects.filter(is_sign=False).filter(~Q(user__flag=NOT_VALID_USER))
+        obj = Sign.objects.filter(is_sign=False).exclude(user__flag=NOT_VALID_USER)
         return obj
 
     @staticmethod
     def reset_sign_status_again():
         print(time.time(), "再次重置所有贴吧的签到状态")
-        Sign.objects.filter(is_sign=True,retry_time=MAX_RETRY_TIMES).filter(~Q(user__flag=NOT_VALID_USER)).update(is_sign=False, status="",retry_time=0)
+        Sign.objects.filter(is_sign=True, retry_time=MAX_RETRY_TIMES).exclude(user__flag=NOT_VALID_USER).update(
+            is_sign=False, status="", retry_time=0)
 
     @staticmethod
     def reset_sign_status():
         print(time.time(), "重置所有贴吧的签到状态")
-        Sign.objects.filter(is_sign=True).filter(~Q(user__flag=NOT_VALID_USER)).update(is_sign=False, status="",retry_time=0)
+        Sign.objects.filter(is_sign=True).exclude(user__flag=NOT_VALID_USER).update(is_sign=False, status="",
+                                                                                    retry_time=0)
 
     def set_status_signing(self):
         Sign.objects.filter(is_sign=False).update(is_sign=True)
@@ -159,7 +160,7 @@ class Sign(models.Model):
         # 日志记录
         SignLog.objects.log(sign, res)
         # 如果尝试签到3次还未成功，则不再尝试
-        error_code = str(res.get('error_code',0))
+        error_code = str(res.get('error_code', 0))
         if error_code in API_STATUS:
             self.is_sign = True
             self.status = API_STATUS[error_code]

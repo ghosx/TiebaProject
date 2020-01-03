@@ -27,7 +27,7 @@ def main():
     scheduler.add_job(User.objects.re_update_like, 'cron', hour='20')
     # 每天0点0分重置贴吧的签到状态，进行签到
     scheduler.add_job(Sign.objects.reset_sign_status, 'cron', hour='0')
-     # 每天4点重置贴吧的签到状态，再次签到
+    # 每天4点重置贴吧的签到状态，再次签到
     scheduler.add_job(Sign.objects.reset_sign_status_again, 'cron', hour='4')
     # 检查用户的bduss是否失效
     scheduler.add_job(User.objects.check_all_user_valid, 'cron', hour='18')

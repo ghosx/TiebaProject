@@ -107,11 +107,11 @@ ZERO = '0'
 FIVE = 5
 
 # 配日志信息
-## 尝试签到次数
+# 尝试签到次数
 MAX_RETRY_TIMES = 2
-## 线程数
+# 线程数
 MAX_WORKER = 10
-## 轮询时间单位秒
+# 轮询时间单位秒
 TIME_SLEEP = 5
 
 # USER STATUS

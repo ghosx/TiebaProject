@@ -110,9 +110,13 @@ include vhost/*.conf;
 nginx -s reload
 service nginx restart
 cd /home/wwwroot/TiebaProject
+python3 manage.py createsuperuser --username admin --email admin@qq.com
+admin123456
+admin123456
 nohup python3 task.py &
 echo "安装完毕"
 echo "打开http://你的ip 开始享受吧"
+echo "后台管理地址 http://你的ip/admin/  用户名 admin 密码 admin123456"
 
 
 
