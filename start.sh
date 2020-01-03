@@ -4,11 +4,11 @@ echo "大约需要一个小时"
 cd /root
 wget http://soft.vpser.net/lnmp/lnmp1.6.tar.gz -cO lnmp1.6.tar.gz && tar zxf lnmp1.6.tar.gz && cd lnmp1.6 && LNMP_Auto="y" DBSelect="3" DB_Root_Password="sign.heeeepin.com" InstallInnodb="y" PHPSelect="7" SelectMalloc="1" CheckMirror="n" ./install.sh lnmp
 cd /home/wwwroot
-wget https://github.com/ghosx/TiebaProject/archive/V2.0.tar.gz
-tar xvf V2.0.tar.gz
-mv TiebaProject-2.0/ TiebaProject
-chmod 777 -R TiebaProject
-cd TiebaProject
+wget https://github.com/ghosx/tiebaProject/archive/v3.0.tar.gz
+tar xvf v3.0.tar.gz
+mv tiebaProject-3.0/ tiebaProject
+chmod 777 -R tiebaProject
+cd tiebaProject
 mkdir logs
 apt install python3-pip -y
 pip3 install -r requirements.txt
@@ -21,15 +21,15 @@ echo '[uwsgi]
 master = true
 processes = 1
 threads = 2
-chdir = /home/wwwroot/TiebaProject
-module = TiebaProject.wsgi
+chdir = /home/wwwroot/tiebaProject
+module = tiebaProject.wsgi
 socket= 0.0.0.0:9000
-logto = /home/wwwroot/TiebaProject/logs/error.log
-pidfile = /home/wwwroot/TiebaProject/uwsgi.pid
+logto = /home/wwwroot/tiebaProject/logs/error.log
+pidfile = /home/wwwroot/tiebaProject/uwsgi.pid
 chmod-socket = 664
 vacuum = true
 master = true
-max-requests = 1000' > /home/wwwroot/TiebaProject/uwsgi.ini
+max-requests = 1000' > /home/wwwroot/tiebaProject/uwsgi.ini
 
 nohup uwsgi --ini uwsgi.ini &
 
@@ -91,8 +91,8 @@ server {
 proxy_read_timeout       600;
 proxy_send_timeout       600;
     charset UTF-8;
-    access_log      /home/wwwroot/TiebaProject/access_log;
-    error_log       /home/wwwroot/TiebaProject/error_log;
+    access_log      /home/wwwroot/tiebaProject/access_log;
+    error_log       /home/wwwroot/tiebaProject/error_log;
 
     client_max_body_size 75M;
 
@@ -101,7 +101,7 @@ proxy_send_timeout       600;
         uwsgi_pass 0.0.0.0:9000;
     }
     location /static {
-        alias /home/wwwroot/TiebaProject/static;
+        alias /home/wwwroot/tiebaProject/static;
      }
  }
 
@@ -109,7 +109,7 @@ include vhost/*.conf;
 }" > nginx.conf
 nginx -s reload
 service nginx restart
-cd /home/wwwroot/TiebaProject
+cd /home/wwwroot/tiebaProject
 python3 manage.py createsuperuser --username admin --email admin@qq.com
 admin123456
 admin123456
