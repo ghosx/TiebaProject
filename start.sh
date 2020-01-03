@@ -4,7 +4,7 @@ echo "大约需要一个小时"
 cd /root
 wget http://soft.vpser.net/lnmp/lnmp1.6.tar.gz -cO lnmp1.6.tar.gz && tar zxf lnmp1.6.tar.gz && cd lnmp1.6 && LNMP_Auto="y" DBSelect="3" DB_Root_Password="sign.heeeepin.com" InstallInnodb="y" PHPSelect="7" SelectMalloc="1" CheckMirror="n" ./install.sh lnmp
 cd /home/wwwroot
-wget https://github.com/ghosx/tiebaProject/archive/v3.0.tar.gz
+wget https://github.com/ghosx/TiebaProject/archive/V3.0.tar.gz
 tar xvf v3.0.tar.gz
 mv tiebaProject-3.0/ tiebaProject
 chmod 777 -R tiebaProject
@@ -114,6 +114,14 @@ python3 manage.py createsuperuser --username admin --email admin@qq.com
 admin123456
 admin123456
 nohup python3 task.py &
+
+# 定时任务
+echo "# 每分钟判断一次进程是否异常退出，实现自动重启
+*/1 * * * * /bin/bash /www/wwwroot/tiebaProject/restart.sh > /dev/null
+# 晚上23：50进行日志分割，防止占用大量磁盘空间
+50 23 * * * /bin/bash /www/wwwroot/tiebaProject/process_log.sh > /dev/null
+# 晚上23：30杀死进程并且重启，防止进程僵死
+30 23 * * * /bin/bash /www/wwwroot/tiebaProject/kill.sh > /dev/null" >> /var/spool/cron/root
 echo "安装完毕"
 echo "打开http://你的ip 开始享受吧"
 echo "后台管理地址 http://你的ip/admin/  用户名 admin 密码 admin123456"

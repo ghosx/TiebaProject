@@ -8,7 +8,7 @@ if [ $? -ne 0 ]
 then
     echo 'task.py is not running...'
     echo 'try to restart task.py'
-    cd /www/wwwroot/TiebaProject
+    cd /www/wwwroot/tiebaProject
     nohup python3 task.py >> task.log 2>&1 &
 else
     echo "Main is running"
