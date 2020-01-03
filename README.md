@@ -6,10 +6,17 @@
 
 作者维护的地址：http://sign.heeeepin.com/
 
-## 一键安装脚本 (debian9测试通过，理论上debain系列都可以)
+## 一键安装脚本 (debian9测试通过，理论上debain，ubuntu系列都可以,不支持centos)
 
 ``wget https://raw.githubusercontent.com/ghosx/TiebaProject/master/start.sh && chmod 777 ./start.sh && ./start.sh
 ``
+## 后台管理
+
+地址： /admin/
+
+用户名： admin
+
+密码： admin123456
  
 ## 重构后(Vue)
 
