@@ -88,8 +88,8 @@ server {
     listen         80;
     server_name    0.0.0.0;
      proxy_connect_timeout    600;
-proxy_read_timeout       600;
-proxy_send_timeout       600;
+    proxy_read_timeout       600;
+    proxy_send_timeout       600;
     charset UTF-8;
     access_log      /home/wwwroot/tiebaProject/access_log;
     error_log       /home/wwwroot/tiebaProject/error_log;
