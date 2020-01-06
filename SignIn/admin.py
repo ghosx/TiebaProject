@@ -6,6 +6,12 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'username', 'token', '共关注', '已签到', '未签到', '是否有效用户', 'created_time')
     search_fields = ('id', 'username',)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(username=request.user.username)
+
 
 class SignAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'fid', 'is_sign', 'retry_time', 'status', 'user')
