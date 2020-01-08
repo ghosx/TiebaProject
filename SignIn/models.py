@@ -16,12 +16,13 @@ class UserManager(models.Manager):
         token = str(uuid.uuid1())
         obj, created = User.objects.update_or_create(username=name,
                                                      defaults={"bduss": bduss, "token": token, "flag": NEW_USER})
-        u = U.objects.get_or_create(username=name, defaults={'email': "123@qq.com", 'password': "heeeepin.com"})[0]
-        u.is_staff = True
-        permissions = Permission.objects.filter(id__in=[28, 32, 36])
-        for permission in permissions:
-            u.user_permissions.add(permission)
-        u.save()
+        if not U.objects.filter(username=name).exists():
+            u = U.objects.create_user(username=name, email="123@qq.com", password="heeeepin.com")
+            u.is_staff = True
+            permissions = Permission.objects.filter(id__in=[28, 32, 36])
+            for permission in permissions:
+                u.user_permissions.add(permission)
+            u.save()
         return created
 
     @staticmethod
