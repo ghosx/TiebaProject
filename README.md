@@ -10,13 +10,21 @@
 
 ``wget https://raw.githubusercontent.com/ghosx/TiebaProject/master/start.sh && chmod 777 ./start.sh && ./start.sh
 ``
-## 后台管理
+## 管理员后台
 
 地址： /admin/
 
 用户名： admin
 
 密码： admin123456
+
+## 普通签到用户后台
+
+地址： /admin/
+
+用户名： 贴吧用户名
+
+密码： heeeepin.com
  
 ## 重构后(Vue)
 
