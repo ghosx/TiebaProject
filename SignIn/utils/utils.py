@@ -4,22 +4,23 @@ import re
 import hashlib
 import time
 import copy
-import json
 
 from constants import *
+
+s = requests.Session()
 
 
 def check_bduss(bduss):
     headers = copy.copy(HEADERS)
     headers.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
-    login = requests.get(url=TBS_URL, headers=headers, timeout=2).json()['is_login']
+    login = s.get(url=TBS_URL, headers=headers, timeout=5).json()['is_login']
     return login == 1
 
 
 def get_tbs(bduss):
     headers = copy.copy(HEADERS)
     headers.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
-    tbs = requests.get(url=TBS_URL, headers=headers, timeout=2).json()[TBS]
+    tbs = s.get(url=TBS_URL, headers=headers, timeout=5).json()[TBS]
     return tbs
 
 
@@ -28,25 +29,11 @@ def get_name(bduss):
     headers = copy.copy(HEADERS)
     headers.update({COOKIE: EMPTY_STR.join([BDUSS, EQUAL, bduss])})
     try:
-        r = requests.get(url=GET_USERNAME_URL, headers=headers).text
+        r = s.get(url=GET_USERNAME_URL, headers=headers,timeout=5).text
         name = re.search(USERNAME_REGEX, r).group(1)
         return name
     except Exception:
         return None
-
-
-def commit_prison(bduss, un):
-    """
-    贴吧封禁API
-    :param bduss:
-    :param un:
-    :return:
-    """
-    prison_data = json.loads(json.dumps(PRISON_DATA) % (bduss, 10, 223328, get_tbs(bduss), time.time(), un))
-    data = encodeData(prison_data)
-    res = requests.post(url=COMMIT_PRISON, data=data, timeout=FIVE).json()
-    print(res)
-    return res[ERROR_CODE] == ZERO
 
 
 def get_favorite(bduss):
@@ -68,9 +55,8 @@ def get_favorite(bduss):
         'vcode_tag': '11',
     }
     data = encodeData(data)
-    url = 'http://c.tieba.baidu.com/c/f/forum/like'
     try:
-        res = requests.post(url=url, data=data, timeout=5).json()
+        res = s.post(url=LIKIE_URL, data=data, timeout=5).json()
     except Exception:
         return []
     returnData = res
@@ -100,8 +86,7 @@ def get_favorite(bduss):
         }
         data = encodeData(data)
         try:
-            res = requests.post(url=url, data=data, timeout=5).json()
-            print(res)
+            res = s.post(url=LIKIE_URL, data=data, timeout=5).json()
         except Exception:
             continue
         if 'forum_list' not in res:
@@ -151,9 +136,9 @@ def client_sign(bduss, sign):
     tbs = get_tbs(bduss)
     data.update({BDUSS: bduss, FID: sign.fid, KW: sign.name, TBS: tbs, TIMESTAMP: str(int(time.time()))})
     data = encodeData(data)
-    res = requests.post(url=SIGN_URL, data=data, timeout=1).json()
+    res = s.post(url=SIGN_URL, data=data, timeout=5).json()
     return res
 
 
 if __name__ == '__main__':
-   pass
+    pass

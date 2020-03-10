@@ -1,27 +1,39 @@
 # -*- coding:utf-8 -*-
 import time
 import uuid
+import logging
 
 from django.db import models
+from django.db.models import F
+from django.core.mail import send_mail, send_mass_mail
 
 from SignIn.utils import utils
-from constants import NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER, API_STATUS, MAX_RETRY_TIMES
+from constants import NOT_VALID_USER, ALREADY_UPDATE_USER, NEW_USER, API_STATUS, MAX_RETRY_TIMES, DEFAULT_EMAIL, \
+    DEFAULT_PASSWORD
+
 from django.contrib.auth.models import User as U, Permission
+from django.utils.html import format_html
+from django.conf import settings
+
+logs = logging.getLogger("task")
 
 
 class UserManager(models.Manager):
 
     def new(self, bduss):
-        name = utils.get_name(bduss)
+        try:
+            name = utils.get_name(bduss)
+        except Exception as e:
+            logs.error(e)
         token = str(uuid.uuid1())
         obj, created = User.objects.update_or_create(username=name,
                                                      defaults={"bduss": bduss, "token": token, "flag": NEW_USER})
         if not U.objects.filter(username=name).exists():
-            u = U.objects.create_user(username=name, email="123@qq.com", password="heeeepin.com")
+            u = U.objects.create_user(
+                username=name, email=DEFAULT_EMAIL, password=DEFAULT_PASSWORD)
             u.is_staff = True
-            permissions = Permission.objects.filter(id__in=[28, 32, 36])
-            for permission in permissions:
-                u.user_permissions.add(permission)
+            # sign_group
+            u.groups.add(1)
             u.save()
         return created
 
@@ -39,7 +51,7 @@ class UserManager(models.Manager):
         修改状态位，重新更新关注的贴吧
         :return:
         """
-        print(time.time(), "重置所有用户的贴吧关注状态")
+        logs.info("重置所有用户的贴吧关注状态")
         User.objects.filter(flag=ALREADY_UPDATE_USER).update(flag=NEW_USER)
 
     @staticmethod
@@ -52,25 +64,60 @@ class UserManager(models.Manager):
 
     @staticmethod
     def check_all_user_valid():
-        users = User.objects.all()
+        users = User.objects.filter(flag=ALREADY_UPDATE_USER)
         for user in users:
             if not user.valid_user():
-                print(time.time(), user.username, '失效')
+                msg = "|".join([user.username, '失效'])
+                logs.warning(msg)
                 user.flag = NOT_VALID_USER
                 user.save()
+                # 邮件通知
+                user.daliy_notice()
 
 
 class User(models.Model):
     bduss = models.CharField(max_length=192, verbose_name="BDUSS")
-    username = models.CharField(max_length=30, unique=True, editable=False, verbose_name="贴吧用户名")
-    token = models.CharField(max_length=200, unique=True, editable=False, verbose_name="个人TOKEN")
-    created_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="提交时间")
-    flag = models.IntegerField(null=True, default=0, verbose_name="新用户")  # 默认0 已update1 bduss失效2
+    username = models.CharField(
+        max_length=30, unique=True, editable=False, verbose_name="贴吧用户名")
+    token = models.CharField(max_length=100, unique=True,
+                             editable=False, verbose_name="个人TOKEN")
+    created_time = models.DateTimeField(
+        auto_now_add=True, editable=False, verbose_name="提交时间")
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    flag = models.IntegerField(
+        null=True, default=0, verbose_name="新用户")  # 默认0 已update1 bduss失效2
+    email = models.EmailField(
+        max_length=100, blank=True, null=True, verbose_name="邮箱")
+    email_notice = models.BooleanField(default=False, verbose_name="是否通知")
     objects = UserManager()
+
+    def daliy_notice(self):
+        # 邮件通知
+        if self.email_notice and self.email:
+            emial_from = settings.EMAIL_FROM
+            today = time.strftime("%Y-%m-%d %H:%M", time.localtime())
+            # bduss 失效通知
+            title = "BDUSS失效通知"
+            site_url = settings.SITE_URL
+            content = f"账号：{self.username}\r\nBDUSS失效！\r\n请尽快前往【{site_url}】扫码更新"
+            res = send_mail("--".join([title, today]), content,
+                            emial_from, (self.email,), fail_silently=False)
+            logs.info("|".join(["邮件通知", self.username, "成功" if res else "失败"]))
+        else:
+            logs.error("|".join([self.username, "未配置邮件通知"]))
 
     @property
     def 是否有效用户(self):
-        return self.flag != 2
+        # 定义显示的颜色，male显示蓝色，female显示红色
+        is_valid_user = self.flag != NOT_VALID_USER
+        if is_valid_user:
+            html = '<span style="color: green;">{}</span>'
+        else:
+            html = '<span style="color: red;">{}</span>'
+        return format_html(
+            html,
+            '有效' if is_valid_user else '无效',
+        )
 
     @property
     def 共关注(self):
@@ -94,21 +141,34 @@ class User(models.Model):
     def like_callback(self, res):
         res = res.result()
         signs = []
+        fids = []
         for i in res:
+            fid, name = i["id"], i["name"]
             try:
-                Sign.objects.get(fid=i["id"], name=i["name"], user=self)
+                Sign.objects.get(fid=fid, name=name, user=self)
             except Sign.DoesNotExist:
-                print(time.time(), "获取到新关注的贴吧:", i["name"])
-                signs.append(Sign(fid=i["id"], name=i["name"], user=self))
-        Sign.objects.bulk_create(signs)
+                # 去重处理
+                if fid not in fids:
+                    msg = "|".join([self.username, "获取到新关注的贴吧:", name])
+                    logs.info(msg)
+                    fids.append(fid)
+                    signs.append(Sign(fid=fid, name=name, user=self))
+        try:
+            Sign.objects.bulk_create(signs)
+        except Exception as e:
+            logs.error(e)
 
     def valid_user(self):
-        return utils.check_bduss(self.bduss)
+        try:
+            res = utils.check_bduss(self.bduss)
+        except Exception as e:
+            logs.error(e)
+        return res
 
     class Meta:
         get_latest_by = "created_time"
         db_table = 'user'
-        ordering = ['created_time']
+        ordering = ['-update_time']
         verbose_name = r"用户"
         verbose_name_plural = verbose_name
 
@@ -118,18 +178,19 @@ class SignManager(models.Manager):
     @staticmethod
     def need_sign():
         # 查找出未签到且用户为有效用户的贴吧
-        obj = Sign.objects.filter(is_sign=False).exclude(user__flag=NOT_VALID_USER)
+        obj = Sign.objects.filter(is_sign=False).exclude(
+            user__flag=NOT_VALID_USER).select_related("user")
         return obj
 
     @staticmethod
     def reset_sign_status_again():
-        print(time.time(), "再次重置所有贴吧的签到状态")
-        Sign.objects.filter(is_sign=True, retry_time=MAX_RETRY_TIMES).exclude(user__flag=NOT_VALID_USER).update(
-            is_sign=False, status="", retry_time=0)
+        logs.info("再次重置所有贴吧的签到状态")
+        Sign.objects.filter(is_sign=True, status="").exclude(user__flag=NOT_VALID_USER).update(
+            is_sign=False, retry_time=0)
 
     @staticmethod
     def reset_sign_status():
-        print(time.time(), "重置所有贴吧的签到状态")
+        logs.info("重置所有贴吧的签到状态")
         Sign.objects.filter(is_sign=True).exclude(user__flag=NOT_VALID_USER).update(is_sign=False, status="",
                                                                                     retry_time=0)
 
@@ -143,16 +204,21 @@ class Sign(models.Model):
     is_sign = models.BooleanField(default=False, verbose_name="是否签到")
     retry_time = models.SmallIntegerField(default=0, verbose_name="重试次数")
     status = models.CharField(max_length=100, verbose_name="签到状态", default="")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="所属用户")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="所属用户")
     objects = SignManager()
 
     def __str__(self):
         return self.name
 
     def sign(self):
-        print(time.time(), "签到贴吧：", self.name)
-        res = utils.client_sign(bduss=self.user.bduss, sign=self)
-        return {"res": res, 'sign': self}
+        u = self.user
+        try:
+            res = utils.client_sign(bduss=u.bduss, sign=self)
+        except Exception as e:
+            logs.error(e)
+        finally:
+            return {"res": res, 'sign': self}
 
     def sign_callback(self, obj):
         result = obj.result()
@@ -160,27 +226,34 @@ class Sign(models.Model):
         sign = result["sign"]
         # 判断res是否为None,即签到过程中有没有发生异常
         if not res:
-            self.is_sign = False
-            self.status = "签到过程中发生异常"
-            self.retry_time += 1
-            self.save()
-            return None
-        # 日志记录
-        SignLog.objects.log(sign, res)
-        # 如果尝试签到3次还未成功，则不再尝试
-        error_code = str(res.get('error_code', 0))
-        if error_code in API_STATUS:
-            self.is_sign = True
-            self.status = API_STATUS[error_code]
+            self.objects.update(
+                is_sign=False, status="网络发生异常", retry_time=F('retry_time') + 1)
         else:
-            print('签到出错', sign.name, res)
-            if self.retry_time > MAX_RETRY_TIMES:
+            # res 为有效值，开始判断签到情况
+            error_code = str(res.get('error_code', 0))
+
+            if error_code in API_STATUS:
                 self.is_sign = True
+                self.status = API_STATUS[error_code]
+                # 只有签到成功的时候进行 日志记录
+                msg = "|".join(["签到成功", sign.user.username, sign.name])
+                logs.info(msg)
+                SignLog.objects.log(sign, res)
             else:
-                self.is_sign = False
-                self.retry_time += 1
-            self.status = res.get('error_msg')
-        self.save()
+                # 如果尝试签到3次还未成功，则不再尝试
+                if self.retry_time >= MAX_RETRY_TIMES:
+                    self.is_sign = True
+                    self.status = "超过最大签到重试次数"
+                    # 只有签到成功的时候进行 日志记录
+                    SignLog.objects.log(sign, res)
+                else:
+                    self.is_sign = False
+                    self.retry_time += 1
+                    self.status = res.get('error_msg', "未知错误")
+                msg = '|'.join(
+                    ['签到出错', sign.user.username, sign.name, self.status])
+                logs.error(msg)
+            self.save()
 
     class Meta:
         db_table = 'sign'
@@ -193,18 +266,32 @@ class SignLogManager(models.Manager):
 
     @staticmethod
     def log(sign, ret_log):
-        log_obj = SignLog(name=sign.name, user=sign.user, ret_log=ret_log)
-        log_obj.save()
+        # 写日志
+        SignLog.objects.update_or_create(
+            name=sign.name, user=sign.user, defaults={"ret_log": ret_log})
+        # 更新签到总数
+        SignTotal.objects.update(number=F('number') + 1)
 
 
 class SignLog(models.Model):
     name = models.CharField(max_length=100, verbose_name="贴吧名")
-    created_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="提交时间")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="所属用户")
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="所属用户")
     ret_log = models.TextField(verbose_name="签到日志")
     objects = SignLogManager()
 
     class Meta:
         db_table = 'sign_log'
+        ordering = ['-update_time']
         verbose_name = '签到日志'
+        verbose_name_plural = verbose_name
+
+
+class SignTotal(models.Model):
+    number = models.IntegerField()
+
+    class Meta:
+        db_table = 'sign_total'
+        verbose_name = '签到总数'
         verbose_name_plural = verbose_name

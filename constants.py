@@ -1,5 +1,24 @@
 # -*- coding：utf8 -*-
 
+# 尝试签到次数
+MAX_RETRY_TIMES = 3
+# 线程数
+SIGN_WORKER = 12
+LIKE_WORKER = 6
+# 轮询时间单位秒
+TIME_SLEEP = 10
+
+# 默认邮箱
+DEFAULT_EMAIL = "123456@qq.com"
+
+# 默认密码
+DEFAULT_PASSWORD = "sign.heeeepin.com"
+
+# API 
+API_ERROR = {"code":-1,"status":"invalid bduss"}
+API_SUCCESS = {"code":0,"status":"success"}
+API_TIPS = {"code":-1,"status":"missing query parameter `bduss`"}
+
 # API STATUS
 API_STATUS = {
     '0': '签到成功',
@@ -12,6 +31,7 @@ API_STATUS = {
     '1990055': '帐号未实名，功能禁用',
     '3250013': '您的账号封禁正在申诉中，暂不能进行此操作',
     '3250002': '您的帐号涉及违规操作，现已被贴吧官方系统封禁，可进行申诉',
+    '-1': '签到过程中发送错误'
 }
 
 # CLIENT_PARAMETER
@@ -27,21 +47,8 @@ SIMPLE_PARA = {
     'vcode_tag': '11',
 }
 
-PRISON_DATA = {
-    'BDUSS': '%s',
-    'day': '%s',
-    'fid': '%s',
-    'ntn': 'banid',
-    'tbs': '%s',
-    'timestamp': '%s',
-    'un': '%s',
-    'word': '.',
-    'z': '1',
-}
-
 # API_URL
 
-COMMIT_PRISON = "http://c.tieba.baidu.com/c/c/bawu/commitprison"
 LIKIE_URL = "http://c.tieba.baidu.com/c/f/forum/like"
 TBS_URL = "http://tieba.baidu.com/dc/common/tbs"
 SIGN_URL = "http://c.tieba.baidu.com/c/c/forum/sign"
@@ -103,22 +110,11 @@ UTF8 = "utf-8"
 SIGN = "sign"
 KW = "kw"
 IS_LOGIN = "is_login"
-ZERO = '0'
-FIVE = 5
-
-# 配日志信息
-# 尝试签到次数
-MAX_RETRY_TIMES = 2
-# 线程数
-MAX_WORKER = 10
-# 轮询时间单位秒
-TIME_SLEEP = 5
 
 # USER STATUS
-
 NEW_USER = 0
 ALREADY_UPDATE_USER = 1
 NOT_VALID_USER = 2
 
 # REGEX
-USERNAME_REGEX = ">([\u4e00-\u9fa5a-zA-Z0-9_]+)的i贴吧<"
+USERNAME_REGEX = ">([\u4e00-\u9fa5a-zA-Z0-9_<《》>]+)的i贴吧<"

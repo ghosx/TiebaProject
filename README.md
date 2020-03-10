@@ -2,30 +2,13 @@
 
 ## 项目简介
 
-独立开发的基于Django的贴吧云签到网站
+独立开发的基于Django的贴吧云签到云回网站
 
 作者维护的地址：http://sign.heeeepin.com/
 
-## 一键安装脚本 (debian9测试通过，理论上debain，ubuntu系列都可以,不支持centos)
+建议不要自行部署，建议不要自行部署，建议不要自行部署，建议不要自行部署，建议不要自行部署
 
-``wget https://raw.githubusercontent.com/ghosx/TiebaProject/master/start.sh && chmod 777 ./start.sh && ./start.sh
-``
-## 管理员后台
 
-地址： /admin/
-
-用户名： admin
-
-密码： admin123456
-
-## 普通签到用户后台
-
-地址： /admin/
-
-用户名： 贴吧用户名
-
-密码： heeeepin.com
- 
 ## 重构后(Vue)
 
 ![index.PNG](https://i.loli.net/2019/11/29/K6TlhREPIjQsp3A.png)

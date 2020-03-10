@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -23,10 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'yv#^ojr4v=0#!t%70&eijj^g)*^7)v^p(xl*td#aai3c6(h4e2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = ['sign.heeeepin.com']
 
 # Application definition
 
@@ -70,16 +68,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'TiebaProject.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tiebaproject',
-        'USER': 'root',
-        'PASSWORD': 'sign.heeeepin.com',
+        'NAME': '***************',
+        'USER': '***************',
+        'PASSWORD': '*******',
         'HOST': '127.0.0.1',
         'PORT': 3306,
     }
@@ -103,7 +100,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -115,8 +111,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
-
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -124,7 +119,67 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
-
 # SESSION
-
 SESSION_COOKIE_AGE = 3600
+
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 25
+
+# 发送邮件的邮箱
+EMAIL_HOST_USER = '***************'
+# 在邮箱中设置的客户端授权密码（指的是你开启服务时腾讯给的那个授权码）
+EMAIL_HOST_PASSWORD = '***************'
+# 收件人看到的发件人
+EMAIL_FROM = '***************'
+
+# 日志
+LOG_DIR = "logs"   # 日志存放路径
+if not os.path.exists(LOG_DIR):
+    os.mkdir(LOG_DIR)
+
+LOGGING_DIR = os.path.join(BASE_DIR, LOG_DIR)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'simple': {
+            'format': '[%(asctime)s] %(levelname)s : %(message)s'
+        },
+        'verbose': {
+            'format': '[%(asctime)s] %(levelname)s %(module)s %(process)d %(thread)d : %(message)s'
+        },
+        'standard': {
+            'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(levelname)s]- %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': os.path.join(LOGGING_DIR, 'task.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 10,
+            'mode': 'a',
+        },
+    },
+    'loggers': {  # log记录器，配置之后就会对应的输出日志
+        'task': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+    }
+}
+
+# Others
+SITE_URL = "sign.heeeepin.com"

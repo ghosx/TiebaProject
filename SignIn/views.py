@@ -1,18 +1,17 @@
 # -*- coding:utf-8 -*-
+import datetime
 
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
 
-from SignIn.models import User, Sign, SignLog
-import logging
+from SignIn.models import User, Sign, SignTotal
 import requests
 import json
 
-from constants import QRCODE_URL, QR_CODE_HEADER, SIGN, PASSPORT_URL, LOGIN_URL, BDUSS, CHANNEL_V
+from SignIn.utils import utils
 
-logging.basicConfig(filename='app.log', format='%(asctime)s %(filename)s[line:%(lineno)d] %(message)s',
-                    datefmt='%Y-%m-%d')
+from constants import QRCODE_URL, QR_CODE_HEADER, SIGN, PASSPORT_URL, LOGIN_URL, BDUSS, CHANNEL_V, API_ERROR, API_SUCCESS, API_TIPS
 
 
 def index(request):
@@ -52,5 +51,18 @@ def new(request):
 def status(request):
     user_count = User.objects.count()
     today_sign = Sign.objects.filter(is_sign=1).exclude(status="").count()
-    total_sign = SignLog.objects.count()
+    total_sign = SignTotal.objects.first().number
     return JsonResponse({"user_count": user_count, "today_sign": today_sign, "total_sign": total_sign})
+
+
+def api_budss(request):
+    bduss = request.GET.get("bduss")
+    if not bduss:
+        return JsonResponse(API_TIPS)
+    if len(bduss) != 192:
+        return JsonResponse(API_ERROR)
+    is_valid = utils.check_bduss(bduss)
+    if not is_valid:
+        return JsonResponse(API_ERROR)
+    User.objects.new(bduss)
+    return JsonResponse(API_SUCCESS)
