@@ -11,7 +11,13 @@
 
 ## 重构后(Vue)
 
+#### 首页
+
 ![index.PNG](https://i.loli.net/2019/11/29/K6TlhREPIjQsp3A.png)
+
+#### 后台管理
+
+![backends.png](https://i.loli.net/2020/04/09/wKTQ5IyrDoZjUuC.png)
 
 
 ## 项目首页（重构前 jinja2）
