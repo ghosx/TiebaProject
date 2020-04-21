@@ -1,0 +1,7 @@
+- model: SignIn.SignTotal
+
+  pk: 1
+
+  fields:
+
+    number: 0

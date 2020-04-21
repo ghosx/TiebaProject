@@ -1,0 +1,45 @@
+version: '3.4'
+
+services:
+  db:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    volumes:
+      - /home/tieba/mysql/data:/var/lib/mysql
+      - /home/tieba/mysql/log:/var/log/mysql
+    restart: always
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-connect='SET NAMES utf8mb4;'
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_DATABASE=tiebaproject
+      - MYSQL_ROOT_PASSWORD=1BQnsRlwhOE5qfuY
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    volumes:
+      - /home/tieba/django:/var/log/tieba
+    command: bash start.sh
+    ports:
+      - "8000:8000"
+    links:
+      - db
+    depends_on:
+      - db
+    restart: always
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./web/static:/usr/share/nginx/html/static
+      - /home/tieba/nginx:/home/logs
+    links:
+      - web
+    depends_on:
+      - web
+    restart: always
+  
+  
