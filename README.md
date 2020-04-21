@@ -28,6 +28,16 @@
 
 `docker-compose up -d`
 
+## 常见问题
+
+- 日志在哪？
+
+> 统一在 /home/tieba 下
+
+- 如何配置邮件通知？
+
+> 修改 web/Tiebaproject/setting.py 中 EMAIL 相关配置
+
 ## 讨论群
 
 TG： https://t.me/tiebasign
