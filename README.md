@@ -1,12 +1,14 @@
 # 贴吧云签到云回复
 
+# [Docker版](https://github.com/ghosx/TiebaProject/tree/docker)
+
 ## 项目简介
 
 独立开发的基于Django的贴吧云签到云回网站
 
 作者维护的地址：http://sign.heeeepin.com/
 
-建议不要自行部署，建议不要自行部署，建议不要自行部署，建议不要自行部署，建议不要自行部署
+**建议不要自行部署，建议不要自行部署，建议不要自行部署，建议不要自行部署，建议不要自行部署**
 
 ## 一键安装脚本 (debian9测试通过，理论上debain，ubuntu系列都可以)
 
