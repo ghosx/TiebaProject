@@ -25,10 +25,6 @@ jobs:
     # Runs a single command using the runners shell
     - name: START
       run: echo START
-
-    # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
-      run: sudo curl -sSL https://get.docker.com | sh
     
     - name: Install docker-compose
       run: sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -39,12 +35,8 @@ jobs:
     - name: Clone Tiebaproject
       run: git clone https://github.com/ghosx/TiebaProject.git && cd TiebaProject
     
-    - name: Run 
-      run: docker-compose up
-      timeout-minutes: 2
-    
-    - name: Stop
-      run: docker-compose stop
+    - name: Docker-compose build 
+      run: docker-compose build
     
     - name: END
-      run: END
+      run: echo END
