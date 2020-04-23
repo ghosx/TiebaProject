@@ -20,9 +20,9 @@
 
 `git clone https://github.com/ghosx/TiebaProject.git`
 
-`cd Tiebaproject`
+`cd TiebaProject`
 
-`git branch docker`
+`git branch remotes/origin/docker`
 
 ### 4. 启动
 
