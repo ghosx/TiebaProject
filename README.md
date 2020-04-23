@@ -1,5 +1,7 @@
 # 贴吧云签到Docker版
 
+# [非docker版](https://github.com/ghosx/TiebaProject)
+
 ## 项目简介
 
 独立开发的基于Django的贴吧云签到网站 
