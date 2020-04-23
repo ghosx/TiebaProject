@@ -7,7 +7,7 @@
 ![star](https://img.shields.io/github/stars/ghosx/TiebaProject?style=plastic&logo=appveyor)
 
 
-# [非docker版](https://github.com/ghosx/TiebaProject)
+# [非docker版](https://github.com/ghosx/TiebaProject/tree/master)
 
 ## 项目简介
 
