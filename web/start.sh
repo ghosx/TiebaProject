@@ -1,4 +1,7 @@
 #!/bin/bash
+# 等待mysql服务启动
+echo "等待mysql服务启动"
+sleep 10
 # 迁移django数据库
 echo "迁移django数据库"
 python manage.py migrate
