@@ -12,22 +12,32 @@
 
 ### 1. 安装docker
 
-`curl -sSL https://get.docker.com | sh`
+```shell
+curl -sSL https://get.docker.com | sh
+```
 
 ### 2. 安装docker-compose
 
-`curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.5/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose`
+```shell
+curl -L https://get.daocloud.io/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
+```
 
 ### 3. 下载本项目
 
-`git clone https://gitee.com/ghosx/TiebaProject.git`
+```shell
+git clone https://gitee.com/ghosx/TiebaProject.git
 
-`cd TiebaProject`
+cd TiebaProject
+
+```
 
 
 ### 4. 启动
 
-`docker-compose up -d`
+```shell
+docker-compose up -d
+
+```
 
 ## 常见问题
 
