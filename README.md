@@ -16,13 +16,12 @@
 
 `curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.5/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose`
 
-### 3. 下载本项目并切换分支
+### 3. 下载本项目
 
-`git clone https://github.com/ghosx/TiebaProject.git`
+`git clone https://gitee.com/ghosx/TiebaProject.git`
 
 `cd TiebaProject`
 
-`git branch remotes/origin/docker`
 
 ### 4. 启动
 
