@@ -2,6 +2,11 @@
 
 ![CI](https://github.com/ghosx/TiebaProject/workflows/CI/badge.svg?branch=docker)
 
+![language](https://img.shields.io/badge/language-python3.6%2B-yellow?style=plastic&logo=appveyor)
+
+![star](https://img.shields.io/github/stars/ghosx/TiebaProject?style=plastic&logo=appveyor)
+
+
 # [非docker版](https://github.com/ghosx/TiebaProject)
 
 ## 项目简介
