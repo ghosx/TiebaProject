@@ -25,10 +25,7 @@ curl -L https://get.daocloud.io/docker/compose/releases/download/1.22.0/docker-c
 ### 3. 下载本项目
 
 ```shell
-git clone https://gitee.com/ghosx/TiebaProject.git
-
-cd TiebaProject
-
+git clone https://gitee.com/ghosx/TiebaProject.git && cd TiebaProject
 ```
 
 
