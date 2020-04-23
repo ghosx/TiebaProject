@@ -41,6 +41,7 @@ jobs:
     
     - name: Run 
       run: docker-compose up
+      timeout-minutes: 2
     
     - name: Stop
       run: docker-compose stop
