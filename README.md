@@ -1,5 +1,7 @@
 # 贴吧云签到Docker版
 
+![CI](https://github.com/ghosx/TiebaProject/workflows/CI/badge.svg?branch=docker)
+
 # [非docker版](https://github.com/ghosx/TiebaProject)
 
 ## 项目简介
