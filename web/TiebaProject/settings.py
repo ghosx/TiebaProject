@@ -128,11 +128,11 @@ EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 25
 
 # 发送邮件的邮箱
-EMAIL_HOST_USER = 'XXXXXXXXXXXXXXXx'
+EMAIL_HOST_USER = None
 # 在邮箱中设置的客户端授权密码（指的是你开启服务时腾讯给的那个授权码）
-EMAIL_HOST_PASSWORD = 'XXXXXXXXX'
+EMAIL_HOST_PASSWORD = None
 # 收件人看到的发件人
-EMAIL_FROM = 'XXXXXXXXXX'
+EMAIL_FROM = None
 
 # 日志
 LOGGING_DIR = "/var/log/tieba"  # 日志存放路径

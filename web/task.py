@@ -17,6 +17,9 @@ django.setup()
 # 这里读取了setting配置，所以必须放在django.setup() 后面
 from SignIn.models import User, Sign
 
+from django.conf import settings
+
+
 
 def main():
     # 定时任务相关 （仅作状态更改，具体任务由下方while循环来做）
@@ -25,10 +28,11 @@ def main():
     scheduler.add_job(User.objects.re_update_like, 'cron', hour='10')
     # 每天0点0分重置贴吧的签到状态，进行签到
     scheduler.add_job(Sign.objects.reset_sign_status, 'cron', hour='0')
-    # 每天8,12,18点再次签到
+    # 每天8,12,16点再次签到
     scheduler.add_job(Sign.objects.reset_sign_status_again, 'cron', hour='8,12,16')
     # 检查用户的bduss是否失效,并且邮件通知
-    scheduler.add_job(User.objects.check_all_user_valid, 'cron', hour='9')
+    if settings.EMAIL_HOST_USER and settings.EMAIL_HOST_PASSWORD and settings.EMAIL_FROM:
+        scheduler.add_job(User.objects.check_all_user_valid, 'cron', hour='9')
     scheduler.start()
     ############################################################################################
     # 后台任务 （签到和更新关注贴吧）
