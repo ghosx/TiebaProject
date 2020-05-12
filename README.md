@@ -51,6 +51,10 @@ docker-compose up -d
 
 > 修改 web/Tiebaproject/setting.py 中 EMAIL 相关配置
 
+- 管理员账号密码
+
+> admin admin123456
+
 ## 讨论群
 
 TG： https://t.me/tiebasign
