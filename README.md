@@ -37,7 +37,7 @@ git clone https://gitee.com/ghosx/TiebaProject.git && cd TiebaProject
 ### 4. 启动
 
 ```shell
-docker-compose up -d
+docker-compose up --build -d
 
 ```
 
