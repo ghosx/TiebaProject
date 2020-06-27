@@ -7,6 +7,32 @@
 
 # [非docker版](https://github.com/ghosx/TiebaProject/tree/master)
 
+# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# [推荐使用Github Action版](https://github.com/ghosx/tieba)
+
+# ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
+
 ## 项目简介
 
 独立开发的基于Django的贴吧云签到网站 
